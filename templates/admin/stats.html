@@ -56,7 +56,7 @@
   <!-- TOP VEHICLES -->
   <div class="chart-card" style="margin-bottom:24px">
     <div class="chart-title">Top véhicules — Popularité & Rentabilité</div>
-    <table>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
       <thead><tr>
         <th>Véhicule</th><th>Catégorie</th><th>Locations</th><th>CA total</th><th>Note moy.</th>
         <th>Taux d'util. (estimé)</th>
@@ -83,14 +83,14 @@
       <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-secondary)">Aucune location terminée</td></tr>
       {% endfor %}
       </tbody>
-    </table>
+    </table></div>
   </div>
 
   <!-- SATISFACTION -->
   {% if satisfaction %}
   <div class="chart-card">
     <div class="chart-title">Satisfaction client par véhicule</div>
-    <table>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
       <thead><tr><th>Véhicule</th><th>Confort</th><th>Propreté</th><th>Fiabilité</th><th>Service</th><th>Avis</th></tr></thead>
       <tbody>
       {% for s in satisfaction %}
@@ -110,7 +110,7 @@
       </tr>
       {% endfor %}
       </tbody>
-    </table>
+    </table></div>
   </div>
   {% endif %}
 </div>

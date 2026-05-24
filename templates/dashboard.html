@@ -2,99 +2,112 @@
 {% block title %}Mon espace{% endblock %}
 {% block extra_css %}
 <style>
-.doc-status-banner{border-radius:12px;padding:18px 22px;margin-bottom:28px;display:flex;align-items:center;gap:14px;border:1.5px solid}
-.doc-status-banner.approuve{background:var(--green-bg);border-color:#a8d8b4}
-.doc-status-banner.en_attente{background:var(--gold-bg);border-color:#e8c878}
-.doc-status-banner.rejete{background:var(--red-bg);border-color:#f0b8b8}
-.doc-status-banner.aucun{background:var(--bg-elevated);border-color:var(--border)}
-.doc-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.res-row{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:20px}
-.res-icon{font-size:36px;flex-shrink:0}
-.res-info{flex:1}
-.res-title{font-weight:700;font-size:15px;margin-bottom:2px}
-.res-meta{font-size:12.5px;color:var(--text-secondary)}
-.res-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;text-align:right;flex-shrink:0}
-.res-price span{font-size:11px;font-weight:400;color:var(--text-muted);display:block;font-family:'Plus Jakarta Sans',sans-serif}
+.doc-banner{border-radius:12px;padding:16px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px;border:1.5px solid}
+.doc-banner.approuve{background:var(--green-bg);border-color:var(--green-border)}
+.doc-banner.en_attente{background:var(--gold-bg);border-color:var(--gold-border)}
+.doc-banner.rejete{background:var(--red-bg);border-color:var(--red-border)}
+.doc-banner.aucun{background:var(--bg-elevated);border-color:var(--border)}
+.doc-icon{width:40px;height:40px;min-width:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(0,0,0,.1)}
+.doc-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px}
+
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+@media(min-width:640px){.stats-row{grid-template-columns:repeat(4,1fr)}}
+
+.res-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.res-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.res-title{font-weight:700;font-size:15px;color:var(--text-primary)}
+.res-meta{font-size:12.5px;color:var(--text-secondary);margin-top:3px}
+.res-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
+.res-price{font-size:18px;font-weight:800;color:var(--text-primary)}
+.res-actions{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 {% endblock %}
 {% block content %}
-<div class="container">
-  <div class="page-header">
-    <h1>Bonjour, {{ user.first_name }} 👋</h1>
-    <p>Bienvenue dans votre espace client.</p>
+<div class="container" style="padding-top:24px;padding-bottom:40px">
+  <div style="margin-bottom:20px">
+    <h1 style="font-size:24px;font-weight:800;letter-spacing:-.02em">Bonjour, {{ user.first_name }} 👋</h1>
+    <p style="color:var(--text-secondary);font-size:14px">Bienvenue dans votre espace client.</p>
   </div>
 
-  <!-- DOC STATUS -->
+  <!-- STATUT DOCUMENTAIRE -->
   {% set doc_configs = {
-    'approuve': ('✓', 'Vos documents sont validés. Vous pouvez réserver librement.', 'var(--green)', 'badge-green', 'Approuvé'),
-    'en_attente': ('⏳', 'Vos documents sont en cours de vérification. Vous serez notifié dès validation.', '#7a5010', 'badge-gold', 'En attente'),
-    'rejete': ('✕', 'Vos documents ont été refusés. ' + (user.doc_reject_reason or '') + ' Veuillez les re-soumettre.', 'var(--red)', 'badge-red', 'Refusé'),
-    'aucun': ('📄', 'Déposez vos documents pour pouvoir réserver un véhicule.', 'var(--text-secondary)', 'badge-gray', 'Non soumis'),
+    'approuve': ('✓','Vos documents sont validés. Vous pouvez réserver.','var(--green)','badge-green','Approuvé'),
+    'en_attente': ('⏳','Documents en cours de vérification. Vous serez notifié.','var(--gold)','badge-gold','En attente'),
+    'rejete': ('✕','Documents refusés. ' + (user.doc_reject_reason or '') + ' Re-soumettez.','var(--red)','badge-red','Refusé'),
+    'aucun': ('📄','Déposez vos documents pour pouvoir réserver.','var(--text-secondary)','badge-gray','Non soumis'),
   } %}
   {% set cfg = doc_configs.get(user.doc_status, doc_configs['aucun']) %}
-  <div class="doc-status-banner {{ user.doc_status }}">
-    <div class="doc-icon" style="background:rgba(0,0,0,.06);color:{{ cfg[2] }}">{{ cfg[0] }}</div>
+  <div class="doc-banner {{ user.doc_status }}">
+    <div class="doc-icon" style="color:{{ cfg[2] }}">{{ cfg[0] }}</div>
     <div style="flex:1">
-      <div style="font-weight:700;font-size:14px;margin-bottom:3px">Statut documentaire : <span class="badge {{ cfg[3] }}">{{ cfg[4] }}</span></div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px">Documents : <span class="badge {{ cfg[3] }}">{{ cfg[4] }}</span></div>
       <div style="font-size:13px;color:var(--text-secondary)">{{ cfg[1] }}</div>
+      {% if user.doc_status != 'approuve' %}
+      <div class="doc-actions">
+        <a href="/documents" class="btn btn-outline btn-sm">{{ 'Re-soumettre' if user.doc_status=='rejete' else '+ Déposer mes documents' }}</a>
+      </div>
+      {% endif %}
     </div>
-    {% if user.doc_status != 'approuve' %}
-    <a href="/documents" class="btn btn-outline btn-sm">{{ 'Re-soumettre' if user.doc_status=='rejete' else 'Déposer mes documents' }}</a>
-    {% endif %}
   </div>
 
-  <!-- QUICK STATS -->
-  <div class="grid-4" style="margin-bottom:32px">
-    {% set total = reservations|length %}
-    {% set active = reservations|selectattr('status','equalto','en_attente')|list|length + reservations|selectattr('status','equalto','confirmee')|list|length %}
-    {% set done = reservations|selectattr('status','equalto','terminee')|list|length %}
-    {% set spent = reservations|selectattr('status','equalto','terminee')|sum(attribute='total_price') %}
-    {% for label, val, sub in [('Total réservations', total, 'depuis inscription'),('En cours', active, 'en attente ou confirmée'),('Terminées', done, 'locations clôturées'),('Dépensé', (spent|round(2)|string) + ' FCFA', 'total cumulé')] %}
+  <!-- STATS -->
+  {% set total = reservations|length %}
+  {% set active = reservations|selectattr('status','equalto','en_attente')|list|length + reservations|selectattr('status','equalto','confirmee')|list|length %}
+  {% set done = reservations|selectattr('status','equalto','terminee')|list|length %}
+  {% set spent = reservations|selectattr('status','equalto','terminee')|sum(attribute='total_price') %}
+  <div class="stats-row">
+    {% for label, val, sub in [('Réservations',total,'total'),('En cours',active,'actives'),('Terminées',done,'clôturées'),('Dépensé',(spent|round(0)|int|string)+' FCFA','cumulé')] %}
     <div class="stat-card">
       <div class="stat-label">{{ label }}</div>
-      <div class="stat-value">{{ val }}</div>
+      <div class="stat-value" style="font-size:22px">{{ val }}</div>
       <div class="stat-sub">{{ sub }}</div>
     </div>
     {% endfor %}
   </div>
 
-  <!-- RESERVATIONS -->
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-    <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:700">Mes réservations</h2>
-    <a href="/catalogue" class="btn btn-primary btn-sm">+ Nouvelle réservation</a>
+  <!-- RÉSERVATIONS -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <h2 style="font-size:18px;font-weight:700">Mes réservations</h2>
+    <a href="/catalogue" class="btn btn-primary btn-sm">+ Réserver</a>
   </div>
+
   {% if reservations %}
   {% for r in reservations %}
-  <div class="res-row">
-    <div class="res-icon">{% if 'Citadine' in (r.brand or '') %}🚗{% elif 'SUV' in (r.brand or '') %}🚙{% else %}🚘{% endif %}</div>
-    <div class="res-info">
-      <div class="res-title">{{ r.brand }} {{ r.model }}</div>
-      <div class="res-meta">
-        📅 {{ r.date_start }} → {{ r.date_end }} &nbsp;·&nbsp;
-        🚗 {{ r.plate }}
+  <div class="res-card">
+    <div class="res-header">
+      <div>
+        <div class="res-title">{{ r.brand }} {{ r.model }}</div>
+        <div class="res-meta">📅 {{ r.date_start }} → {{ r.date_end }}</div>
+        {% if r.plate %}<div class="res-meta">🚗 {{ r.plate }}</div>{% endif %}
+        {% if r.notes %}<div class="res-meta">📝 {{ r.notes }}</div>{% endif %}
       </div>
-      {% if r.notes %}<div class="res-meta" style="margin-top:3px">📝 {{ r.notes }}</div>{% endif %}
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <span class="badge {% if r.status=='confirmee' %}badge-green{% elif r.status=='en_attente' %}badge-gold{% elif r.status=='terminee' %}badge-teal{% elif r.status in ['annulee','refusee'] %}badge-red{% else %}badge-gray{% endif %}">
         {{ {'en_attente':'En attente','confirmee':'Confirmée','terminee':'Terminée','annulee':'Annulée','refusee':'Refusée'}.get(r.status, r.status) }}
       </span>
-      {% if r.status in ['en_attente','confirmee'] %}
-      <form method="post" action="/annuler-reservation/{{ r.id }}" style="display:inline" onsubmit="return confirm('Confirmer l\'annulation ?')">
-        <button type="submit" class="btn btn-danger btn-sm">Annuler</button>
-      </form>
-      {% elif r.status == 'terminee' %}
-        <div class="res-price">{{ r.total_price }} FCFA <span>Total payé</span></div>
-        {% if not r.invoice_id %}<a href="/avis/{{ r.id }}" class="btn btn-outline btn-sm">Laisser un avis ⭐</a>{% endif %}
+    </div>
+    <div class="res-footer">
+      {% if r.status == 'terminee' %}
+        <div class="res-price">{{ r.total_price }} FCFA</div>
+        <div class="res-actions">
+          {% if not r.invoice_id %}<a href="/avis/{{ r.id }}" class="btn btn-outline btn-sm">⭐ Avis</a>{% endif %}
+        </div>
+      {% elif r.status in ['en_attente','confirmee'] %}
+        <div style="font-size:13px;color:var(--text-muted)">{{ r.total_price }} FCFA estimé</div>
+        <form method="post" action="/annuler-reservation/{{ r.id }}" onsubmit="return confirm('Annuler cette réservation ?')">
+          <button type="submit" class="btn btn-danger btn-sm">Annuler</button>
+        </form>
+      {% else %}
+        <div style="font-size:13px;color:var(--text-muted)">{{ r.total_price }} FCFA</div>
+        <span></span>
       {% endif %}
     </div>
   </div>
   {% endfor %}
   {% else %}
-  <div style="text-align:center;padding:48px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px">
+  <div style="text-align:center;padding:40px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px">
     <div style="font-size:40px;margin-bottom:12px">🚗</div>
     <div style="font-weight:600;font-size:16px;margin-bottom:6px">Aucune réservation</div>
-    <div style="color:var(--text-secondary);font-size:14px;margin-bottom:20px">Consultez notre catalogue pour trouver votre prochain véhicule.</div>
+    <div style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">Consultez notre catalogue pour trouver votre véhicule.</div>
     <a href="/catalogue" class="btn btn-primary">Voir le catalogue</a>
   </div>
   {% endif %}

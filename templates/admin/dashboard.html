@@ -52,7 +52,7 @@
         <a href="/admin/reservations" style="font-size:13px;color:var(--accent);font-weight:600">Voir tout →</a>
       </div>
       <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-        <table>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
           <thead><tr>
             <th>Client</th><th>Véhicule</th><th>Dates</th><th>Statut</th><th>Action</th>
           </tr></thead>
@@ -85,7 +85,7 @@
           </tr>
           {% endfor %}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
 

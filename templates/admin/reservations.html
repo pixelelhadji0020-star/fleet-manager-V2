@@ -30,7 +30,7 @@
     </div>
   </div>
   <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-    <table>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
       <thead><tr><th>Client</th><th>Véhicule</th><th>Dates</th><th>Total</th><th>Statut</th><th>Actions</th></tr></thead>
       <tbody>
       {% for r in reservations %}
@@ -68,7 +68,7 @@
       <tr><td colspan="6" style="text-align:center;padding:48px;color:var(--text-secondary)">Aucune réservation</td></tr>
       {% endfor %}
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 {% endblock %}
