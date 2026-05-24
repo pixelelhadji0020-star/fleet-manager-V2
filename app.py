@@ -64,38 +64,36 @@ def add_notif(uid, title, msg, t='info'):
     }).execute()
 
 def save_upload(file_obj, prefix):
-    """Upload vers Supabase Storage (persistant) ou filesystem local."""
+    """Sauvegarde un fichier uploadé.
+    - Si Supabase Storage est configuré (bucket fleet-uploads), upload là-bas.
+    - Sinon, sauvegarde en local dans static/uploads/.
+    """
     if not file_obj or not file_obj.filename or not allowed_file(file_obj.filename):
         return None
     ext = file_obj.filename.rsplit('.', 1)[1].lower()
     fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
-
-    # Lire le contenu du fichier
     file_bytes = file_obj.read()
-    mime = file_obj.content_type or 'application/octet-stream'
 
-    # Toujours tenter Supabase Storage en priorité
+    # Tentative Supabase Storage
     if SUPABASE_URL and SUPABASE_KEY:
         try:
             client = sb()
             bucket = 'fleet-uploads'
             client.storage.from_(bucket).upload(
-                path=fname,
-                file=file_bytes,
-                file_options={"content-type": mime, "upsert": "true"}
+                fname,
+                file_bytes,
+                {"content-type": file_obj.content_type or "application/octet-stream",
+                 "upsert": "true"}
             )
-            # Retourner l'URL publique complète
-            public_url = client.storage.from_(bucket).get_public_url(fname)
-            return public_url
+            return client.storage.from_(bucket).get_public_url(fname)
         except Exception as e:
-            app.logger.error(f"Supabase Storage error: {e}")
+            app.logger.warning(f"Supabase Storage indisponible, fallback local: {e}")
 
-    # Fallback local (développement)
+    # Fallback filesystem local
     upload_dir = os.path.join(_root, 'static', 'uploads')
     os.makedirs(upload_dir, exist_ok=True)
-    import io
-    with open(os.path.join(upload_dir, fname), 'wb') as f:
-        f.write(file_bytes)
+    with open(os.path.join(upload_dir, fname), 'wb') as fout:
+        fout.write(file_bytes)
     return fname
 
 # ─── PUBLIC ───────────────────────────────────
