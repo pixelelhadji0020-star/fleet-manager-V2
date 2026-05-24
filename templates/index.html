@@ -204,7 +204,7 @@
       <div class="vcard">
         <div class="vcard-img">
           {% if v.image %}
-            <img src="/uploads/{{ v.image }}" alt="{{ v.brand }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
+            <img src="{{ v.image if v.image and v.image.startswith(\'http\') else \'/uploads/\' + v.image if v.image else \'\' }}" alt="{{ v.brand }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
           {% elif v.category == 'Citadine' %}🚗
           {% elif v.category == 'SUV' %}🚙
           {% elif v.category == 'Luxe' %}🏎️

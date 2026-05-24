@@ -64,17 +64,38 @@ def add_notif(uid, title, msg, t='info'):
     }).execute()
 
 def save_upload(file_obj, prefix):
+    """Upload vers Supabase Storage (persistant) ou filesystem local."""
     if not file_obj or not file_obj.filename or not allowed_file(file_obj.filename):
         return None
     ext = file_obj.filename.rsplit('.', 1)[1].lower()
     fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
-    # Sur Vercel, /tmp est le seul dossier writable ; en local on utilise static/uploads
-    if os.environ.get('VERCEL'):
-        upload_dir = '/tmp/uploads'
-    else:
-        upload_dir = os.path.join(_root, 'static', 'uploads')
+
+    # Lire le contenu du fichier
+    file_bytes = file_obj.read()
+    mime = file_obj.content_type or 'application/octet-stream'
+
+    # Toujours tenter Supabase Storage en priorité
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            client = sb()
+            bucket = 'fleet-uploads'
+            client.storage.from_(bucket).upload(
+                path=fname,
+                file=file_bytes,
+                file_options={"content-type": mime, "upsert": "true"}
+            )
+            # Retourner l'URL publique complète
+            public_url = client.storage.from_(bucket).get_public_url(fname)
+            return public_url
+        except Exception as e:
+            app.logger.error(f"Supabase Storage error: {e}")
+
+    # Fallback local (développement)
+    upload_dir = os.path.join(_root, 'static', 'uploads')
     os.makedirs(upload_dir, exist_ok=True)
-    file_obj.save(os.path.join(upload_dir, fname))
+    import io
+    with open(os.path.join(upload_dir, fname), 'wb') as f:
+        f.write(file_bytes)
     return fname
 
 # ─── PUBLIC ───────────────────────────────────
@@ -580,8 +601,7 @@ def admin_stats():
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
-    if os.environ.get('VERCEL'):
-        return send_from_directory('/tmp/uploads', filename)
+    # Fallback local uniquement (les fichiers Supabase ont une URL complète)
     return send_from_directory(os.path.join(_root, 'static', 'uploads'), filename)
 
 # ─── BOOT ──────────────────────────────────────

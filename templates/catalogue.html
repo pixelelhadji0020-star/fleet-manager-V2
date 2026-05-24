@@ -91,7 +91,7 @@
     <div class="vcard">
       <div class="vcard-img">
         {% if v.image %}
-          <img src="/uploads/{{ v.image }}" alt="{{ v.brand }} {{ v.model }}">
+          <img src="{{ v.image if v.image and v.image.startswith(\'http\') else \'/uploads/\' + v.image if v.image else \'\' }}" alt="{{ v.brand }} {{ v.model }}">
         {% else %}
           {% if v.category=='Citadine' %}🚗{% elif v.category=='SUV' %}🚙{% elif v.category=='Luxe' %}🏎️{% elif v.category=='Utilitaire' %}🚐{% else %}🚘{% endif %}
         {% endif %}
