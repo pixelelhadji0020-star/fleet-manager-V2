@@ -629,8 +629,7 @@ def internal_error(e):
 
 @app.errorhandler(404)
 def not_found(e):
-    return render_template('index.html', vehicles=[], stats={'dispo':0,'clients':0,'locations':0},
-                           notifs=[], unread=0), 404
+    return redirect(url_for('index'))
 
 # ─── BOOT ──────────────────────────────────────
 if __name__ == '__main__':

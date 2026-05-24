@@ -41,7 +41,7 @@
     <div class="form-group">
       <label class="form-label">Photo du véhicule <span style="color:var(--text-muted)">(JPG, PNG — optionnel)</span></label>
       <div class="img-preview" onclick="document.getElementById('image-input').click()" id="preview-box">
-        <img id="preview-img" {% if not (vehicle and vehicle.image) %}style="display:none"{% else %}src="{{ vehicle.image if vehicle.image and vehicle.image.startswith(\'http\') else \'/uploads/\' + vehicle.image if vehicle.image else \'\' }}"{% endif %} alt="Photo">
+        <img id="preview-img" {% if not (vehicle and vehicle.image) %}style="display:none"{% else %}src="{% if vehicle.image %}{% if vehicle.image.startswith('http') %}{{ vehicle.image }}{% else %}/uploads/{{ vehicle.image }}{% endif %}{% endif %}"{% endif %} alt="Photo">
         <div class="img-overlay">
           <span style="font-size:22px">📷</span>
           <span style="font-size:13px;font-weight:600">Changer la photo</span>
