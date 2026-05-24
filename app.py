@@ -52,16 +52,22 @@ def get_user():
 def get_notifs():
     if 'user_id' not in session:
         return [], 0
-    r = sb().table('notifications').select('*')\
-        .eq('user_id', session['user_id']).order('created_at', desc=True).limit(10).execute()
-    notifs = r.data or []
-    unread = sum(1 for n in notifs if not n.get('read'))
-    return notifs, unread
+    try:
+        r = sb().table('notifications').select('*')\
+            .eq('user_id', session['user_id']).order('created_at', desc=True).limit(10).execute()
+        notifs = r.data or []
+        unread = sum(1 for n in notifs if not n.get('read'))
+        return notifs, unread
+    except Exception:
+        return [], 0
 
 def add_notif(uid, title, msg, t='info'):
-    sb().table('notifications').insert({
-        'user_id': uid, 'title': title, 'message': msg, 'type': t
-    }).execute()
+    try:
+        sb().table('notifications').insert({
+            'user_id': uid, 'title': title, 'message': msg, 'type': t
+        }).execute()
+    except Exception:
+        pass
 
 def save_upload(file_obj, prefix):
     """Sauvegarde un fichier uploadé.
@@ -99,13 +105,20 @@ def save_upload(file_obj, prefix):
 # ─── PUBLIC ───────────────────────────────────
 @app.route('/')
 def index():
-    r = sb().table('vehicles').select('*').neq('status', 'hors_service').execute()
-    vehicles = r.data or []
-    stats = {
-        'dispo': sum(1 for v in vehicles if v['status'] == 'disponible'),
-        'clients': sb().table('users').select('id', count='exact').eq('role', 'client').execute().count or 0,
-        'locations': sb().table('reservations').select('id', count='exact').eq('status', 'terminee').execute().count or 0
-    }
+    try:
+        r = sb().table('vehicles').select('*').neq('status', 'hors_service').execute()
+        vehicles = r.data or []
+    except Exception as e:
+        app.logger.error(f"index vehicles error: {e}")
+        vehicles = []
+    try:
+        stats = {
+            'dispo': sum(1 for v in vehicles if v['status'] == 'disponible'),
+            'clients': sb().table('users').select('id', count='exact').eq('role', 'client').execute().count or 0,
+            'locations': sb().table('reservations').select('id', count='exact').eq('status', 'terminee').execute().count or 0
+        }
+    except Exception:
+        stats = {'dispo': 0, 'clients': 0, 'locations': 0}
     notifs, unread = get_notifs()
     return render_template('index.html', vehicles=vehicles[:6], stats=stats,
                            notifs=notifs, unread=unread)
@@ -117,26 +130,26 @@ def catalogue():
     max_price = request.args.get('max_price', '')
     date_start= request.args.get('date_start', '')
     date_end  = request.args.get('date_end', '')
-
-    q = sb().table('vehicles').select('*')
-    if category:  q = q.eq('category', category)
-    if fuel:      q = q.eq('fuel', fuel)
-    if max_price: q = q.lte('price_per_day', float(max_price))
-    r = q.execute()
-    vehicles = r.data or []
-
-    if date_start and date_end:
-        booked = sb().table('reservations').select('vehicle_id')\
-            .not_.in_('status', ['annulee','refusee'])\
-            .lte('date_start', date_end).gte('date_end', date_start).execute()
-        booked_ids = {b['vehicle_id'] for b in (booked.data or [])}
-        vehicles = [v for v in vehicles if v['id'] not in booked_ids]
-    else:
-        vehicles = [v for v in vehicles if v['status'] != 'hors_service']
-
-    all_v = sb().table('vehicles').select('category,fuel').execute().data or []
-    categories = sorted({v['category'] for v in all_v if v.get('category')})
-    fuels      = sorted({v['fuel']     for v in all_v if v.get('fuel')})
+    vehicles, categories, fuels = [], [], []
+    try:
+        q = sb().table('vehicles').select('*')
+        if category:  q = q.eq('category', category)
+        if fuel:      q = q.eq('fuel', fuel)
+        if max_price: q = q.lte('price_per_day', float(max_price))
+        vehicles = q.execute().data or []
+        if date_start and date_end:
+            booked = sb().table('reservations').select('vehicle_id')\
+                .not_.in_('status', ['annulee','refusee'])\
+                .lte('date_start', date_end).gte('date_end', date_start).execute()
+            booked_ids = {b['vehicle_id'] for b in (booked.data or [])}
+            vehicles = [v for v in vehicles if v['id'] not in booked_ids]
+        else:
+            vehicles = [v for v in vehicles if v['status'] != 'hors_service']
+        all_v = sb().table('vehicles').select('category,fuel').execute().data or []
+        categories = sorted({v['category'] for v in all_v if v.get('category')})
+        fuels      = sorted({v['fuel']     for v in all_v if v.get('fuel')})
+    except Exception as e:
+        app.logger.error(f"catalogue error: {e}")
     notifs, unread = get_notifs()
     return render_template('catalogue.html', vehicles=vehicles,
                            categories=[{'category': c} for c in categories],
@@ -601,6 +614,23 @@ def admin_stats():
 def uploaded_file(filename):
     # Fallback local uniquement (les fichiers Supabase ont une URL complète)
     return send_from_directory(os.path.join(_root, 'static', 'uploads'), filename)
+
+# ─── GESTIONNAIRES D'ERREUR ────────────────────
+@app.errorhandler(500)
+def internal_error(e):
+    import traceback
+    app.logger.error(f"500 error: {traceback.format_exc()}")
+    return f"""<!DOCTYPE html>
+<html><body style="font-family:monospace;padding:40px;background:#111827;color:#f9fafb">
+<h2 style="color:#f87171">Erreur 500 — Détail</h2>
+<pre style="background:#1f2d42;padding:20px;border-radius:8px;color:#fbbf24;overflow:auto">{str(e)}</pre>
+<p><a href="/" style="color:#10b981">← Retour</a></p>
+</body></html>""", 500
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template('index.html', vehicles=[], stats={'dispo':0,'clients':0,'locations':0},
+                           notifs=[], unread=0), 404
 
 # ─── BOOT ──────────────────────────────────────
 if __name__ == '__main__':
