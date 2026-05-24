@@ -7,7 +7,7 @@
 .hero{
   background: linear-gradient(135deg, #0f1a2e 0%, #111827 60%, #0d2218 100%);
   color: var(--text-primary);
-  padding:80px 48px; display:flex; align-items:center; justify-content:space-between; gap:48px;
+  padding:100px 48px; display:flex; align-items:center; justify-content:center;
   position:relative; overflow:hidden; border-bottom: 1px solid var(--border);
 }
 .hero::before{
@@ -21,7 +21,7 @@
   width:300px; height:300px; border-radius:50%;
   border:1px solid rgba(16,185,129,.06); pointer-events:none;
 }
-.hero-content{max-width:560px; position:relative; z-index:1}
+.hero-content{max-width:680px; position:relative; z-index:1; text-align:center; }
 .hero-label{
   font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.14em;
   text-transform:uppercase; color:var(--accent); margin-bottom:20px;
@@ -34,7 +34,7 @@
 }
 .hero-title em{ color: var(--accent); font-style:italic }
 .hero-sub{ font-size:16px; color: var(--text-secondary); line-height:1.6; margin-bottom:36px }
-.hero-actions{ display:flex; gap:12px; flex-wrap:wrap }
+.hero-actions{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
 .hero-btn{
   padding:13px 28px; border-radius:11px; font-weight:700; font-size:14px;
   font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all .18s;
@@ -55,22 +55,6 @@
 }
 .hero-btn-outline:hover{ border-color:var(--accent); color:var(--text-primary); }
 
-.hero-stats{
-  display:flex; flex-direction:column; gap:16px;
-  background: rgba(255,255,255,.04);
-  border:1px solid var(--border);
-  border-radius:16px; padding:28px 32px; min-width:220px;
-  position:relative; z-index:1;
-  backdrop-filter: blur(10px);
-}
-.hero-stat-val{
-  font-size:36px; font-weight:800; letter-spacing:-.04em; line-height:1;
-  color: var(--text-primary);
-}
-.hero-stat-label{
-  font-size:12px; color:var(--text-muted); margin-top:3px;
-  font-family:'DM Mono',monospace; letter-spacing:.06em;
-}
 
 /* ── SECTION LABEL ──────────────────────────────────── */
 .section-label-outer{
@@ -167,25 +151,19 @@
 
 /* ── RESPONSIVE ─────────────────────────────────────── */
 @media(max-width:900px){
-  .hero{ padding:56px 32px; flex-direction:column; align-items:flex-start; gap:32px; }
+  .hero{ padding:72px 32px; }
   .hero-title{ font-size:40px }
-  .hero-stats{ width:100%; flex-direction:row; flex-wrap:wrap; gap:12px; padding:20px 24px; min-width:0; }
-  .hero-stats > div{ flex:1; min-width:120px }
-  .hero-stat-val{ font-size:28px }
   .vehicles-grid{ grid-template-columns:repeat(2,1fr) }
   .how-grid{ grid-template-columns:1fr; gap:32px; }
   .cta-band{ flex-direction:column; align-items:flex-start; padding:32px; gap:20px; }
   .cta-btn{ width:100%; text-align:center }
 }
 @media(max-width:560px){
-  .hero{ padding:40px 20px; gap:28px }
+  .hero{ padding:60px 20px; }
   .hero-title{ font-size:32px }
   .hero-sub{ font-size:14px; margin-bottom:24px }
-  .hero-actions{ flex-direction:column; gap:10px }
+  .hero-actions{ flex-direction:column; gap:10px; align-items:center; }
   .hero-btn{ width:100%; text-align:center; padding:14px 20px }
-  .hero-stats{ gap:8px; padding:16px }
-  .hero-stats > div{ min-width:calc(50% - 4px) }
-  .hero-stat-val{ font-size:24px }
   .vehicles-grid{ grid-template-columns:1fr }
   .how-num{ width:36px; height:36px; font-size:13px; border-radius:9px }
   .how-title{ font-size:14px }
@@ -209,20 +187,7 @@
       <a href="/inscription" class="hero-btn hero-btn-outline">Créer mon compte</a>
     </div>
   </div>
-  <div class="hero-stats">
-    <div>
-      <div class="hero-stat-val">{{ stats.dispo }}</div>
-      <div class="hero-stat-label">Véhicules disponibles</div>
-    </div>
-    <div>
-      <div class="hero-stat-val">{{ stats.clients }}</div>
-      <div class="hero-stat-label">Clients inscrits</div>
-    </div>
-    <div>
-      <div class="hero-stat-val">{{ stats.locations }}</div>
-      <div class="hero-stat-label">Locations réalisées</div>
-    </div>
-  </div>
+
 </section>
 
 <div class="container">
