@@ -16,7 +16,7 @@
   white-space:nowrap;transition:all .15s;
 }
 .admin-nav a:hover{color:var(--text-primary)}
-.admin-nav a.active{color:var(--text-primary);border-bottom-color:var(--text-primary);font-weight:600}
+.admin-nav a.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
 
 /* ── TABLE WRAPPER — défilement horizontal sur mobile ── */
 .table-scroll{
@@ -66,11 +66,11 @@
 
 {% block content %}
 <div class="admin-nav">
-  <a href="/admin">Dashboard</a>
-  <a href="/admin/clients">Clients</a>
-  <a href="/admin/reservations">Réservations</a>
-  <a href="/admin/vehicules" class="active">Véhicules</a>
-  <a href="/admin/statistiques">Statistiques</a>
+  <a href="/admin">📊 Dashboard</a>
+  <a href="/admin/clients">👥 Clients</a>
+  <a href="/admin/reservations">📅 Réservations</a>
+  <a href="/admin/vehicules" class="active">🚗 Véhicules</a>
+  <a href="/admin/statistiques">📈 Stats</a>
 </div>
 
 <div class="container" style="padding-top:32px;padding-bottom:60px">

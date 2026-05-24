@@ -518,29 +518,48 @@ setTimeout(() => {
 
 <!-- BOTTOM NAV MOBILE -->
 <nav class="bottom-nav">
-  <a href="/" class="bottom-nav-item {% if request.endpoint=='index' %}active{% endif %}">
-    <span>🏠</span><span>Accueil</span>
-  </a>
-  <a href="/catalogue" class="bottom-nav-item {% if request.endpoint=='catalogue' %}active{% endif %}">
-    <span>🚗</span><span>Catalogue</span>
-  </a>
-  {% if session.user_id %}
-    {% if session.role == 'admin' %}
-    <a href="/admin" class="bottom-nav-item {% if 'admin' in (request.endpoint or '') %}active{% endif %}">
-      <span>⚙️</span><span>Admin</span>
+  {% if session.user_id and session.role == 'admin' %}
+    {# Navigation admin : 5 sections #}
+    <a href="/admin" class="bottom-nav-item {% if request.endpoint=='admin_dashboard' %}active{% endif %}">
+      <span>📊</span><span>Dashboard</span>
     </a>
-    {% else %}
+    <a href="/admin/clients" class="bottom-nav-item {% if 'client' in (request.endpoint or '') %}active{% endif %}">
+      <span>👥</span><span>Clients</span>
+    </a>
+    <a href="/admin/reservations" class="bottom-nav-item {% if 'reservation' in (request.endpoint or '') %}active{% endif %}">
+      <span>📅</span><span>Réservations</span>
+    </a>
+    <a href="/admin/vehicules" class="bottom-nav-item {% if 'vehicle' in (request.endpoint or '') %}active{% endif %}">
+      <span>🚗</span><span>Véhicules</span>
+    </a>
+    <a href="/deconnexion" class="bottom-nav-item">
+      <span>🚪</span><span>Quitter</span>
+    </a>
+  {% elif session.user_id %}
+    {# Navigation client #}
+    <a href="/" class="bottom-nav-item {% if request.endpoint=='index' %}active{% endif %}">
+      <span>🏠</span><span>Accueil</span>
+    </a>
+    <a href="/catalogue" class="bottom-nav-item {% if request.endpoint=='catalogue' %}active{% endif %}">
+      <span>🚗</span><span>Catalogue</span>
+    </a>
     <a href="/espace-client" class="bottom-nav-item {% if request.endpoint=='dashboard' %}active{% endif %}">
       <span>👤</span><span>Mon espace</span>
     </a>
     <a href="/documents" class="bottom-nav-item {% if request.endpoint=='upload_documents' %}active{% endif %}">
       <span>📄</span><span>Documents</span>
     </a>
-    {% endif %}
     <a href="/deconnexion" class="bottom-nav-item">
       <span>🚪</span><span>Quitter</span>
     </a>
   {% else %}
+    {# Navigation visiteur #}
+    <a href="/" class="bottom-nav-item {% if request.endpoint=='index' %}active{% endif %}">
+      <span>🏠</span><span>Accueil</span>
+    </a>
+    <a href="/catalogue" class="bottom-nav-item {% if request.endpoint=='catalogue' %}active{% endif %}">
+      <span>🚗</span><span>Catalogue</span>
+    </a>
     <a href="/connexion" class="bottom-nav-item {% if request.endpoint=='login' %}active{% endif %}">
       <span>🔑</span><span>Connexion</span>
     </a>

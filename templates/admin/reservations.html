@@ -2,73 +2,95 @@
 {% block title %}Réservations{% endblock %}
 {% block extra_css %}
 <style>
-.admin-nav{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 48px;display:flex;gap:4px;overflow-x:auto}
-.admin-nav a{font-size:12.5px;font-weight:500;padding:12px 16px;color:var(--text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
-.admin-nav a:hover{color:var(--text-primary)}
-.admin-nav a.active{color:var(--text-primary);border-bottom-color:var(--text-primary);font-weight:600}
-.act{display:inline-flex;align-items:center;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;margin-right:4px}
-.act-confirm{background:var(--green-bg);border-color:#a8d8b4;color:var(--green)}.act-confirm:hover{background:var(--green);color:#fff}
-.act-refuse{background:var(--red-bg);border-color:#f0b8b8;color:var(--red)}.act-refuse:hover{background:var(--red);color:#fff}
-.act-done{background:#e8eef8;border-color:#b8c8e8;color:var(--accent)}.act-done:hover{background:var(--accent);color:#fff}
+.admin-nav{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 12px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.admin-nav::-webkit-scrollbar{display:none}
+.admin-nav a{font-size:13px;font-weight:500;padding:13px 16px;color:var(--text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.admin-nav a.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+
+/* Filtres scrollables horizontalement */
+.filter-pills{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:20px}
+.filter-pills::-webkit-scrollbar{display:none}
+.filter-pills a{flex-shrink:0}
+
+/* Cartes réservation mobile */
+.res-admin-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.res-admin-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.res-admin-actions{display:flex;gap:6px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border)}
+.res-admin-actions form{flex:1;min-width:100px}
+.res-admin-actions button{width:100%;justify-content:center}
+.act{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;width:100%}
+.act-confirm{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}.act-confirm:hover{background:var(--green);color:#fff}
+.act-refuse{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}.act-refuse:hover{background:var(--red);color:#fff}
+.act-done{background:var(--accent-dim);border-color:rgba(16,185,129,.3);color:var(--accent)}.act-done:hover{background:var(--accent);color:#fff}
 </style>
 {% endblock %}
 {% block content %}
 <div class="admin-nav">
-  <a href="/admin">Dashboard</a>
-  <a href="/admin/clients">Clients</a>
-  <a href="/admin/reservations" class="active">Réservations</a>
-  <a href="/admin/vehicules">Véhicules</a>
-  <a href="/admin/statistiques">Statistiques</a>
+  <a href="/admin">📊 Dashboard</a>
+  <a href="/admin/clients">👥 Clients</a>
+  <a href="/admin/reservations" class="active">📅 Réservations</a>
+  <a href="/admin/vehicules">🚗 Véhicules</a>
+  <a href="/admin/statistiques">📈 Stats</a>
 </div>
-<div class="container" style="padding-top:32px;padding-bottom:60px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-    <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em">Réservations</h1>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      {% for val, label in [('','Toutes'),('en_attente','En attente'),('confirmee','Confirmées'),('terminee','Terminées'),('annulee','Annulées')] %}
-      <a href="/admin/reservations{% if val %}?status={{ val }}{% endif %}" class="btn {% if status_filter==val %}btn-primary{% else %}btn-outline{% endif %} btn-sm">{{ label }}</a>
-      {% endfor %}
+
+<div class="container" style="padding-top:24px;padding-bottom:80px">
+  <h1 style="font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:20px">Réservations</h1>
+
+  <!-- FILTRES SCROLLABLES -->
+  <div class="filter-pills">
+    {% for val, label, icon in [('','Toutes','📋'),('en_attente','En attente','⏳'),('confirmee','Confirmées','✓'),('terminee','Terminées','🏁'),('annulee','Annulées','✕')] %}
+    <a href="/admin/reservations{% if val %}?status={{ val }}{% endif %}"
+       class="btn {% if status_filter==val %}btn-primary{% else %}btn-outline{% endif %} btn-sm">
+      {{ icon }} {{ label }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- CARTES (mobile-first) -->
+  {% if reservations %}
+  {% for r in reservations %}
+  <div class="res-admin-card">
+    <div class="res-admin-header">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px;color:var(--text-primary)">{{ r.first_name }} {{ r.last_name }}</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:1px">{{ r.email }}</div>
+        <div style="font-size:13px;color:var(--text-primary);margin-top:4px;font-weight:600">{{ r.brand }} {{ r.model }}
+          {% if r.plate %}<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:400;color:var(--text-muted)"> · {{ r.plate }}</span>{% endif %}
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:3px">📅 {{ r.date_start }} → {{ r.date_end }}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-top:4px">{{ r.total_price }} FCFA</div>
+      </div>
+      <span class="badge {% if r.status=='confirmee' %}badge-green{% elif r.status=='en_attente' %}badge-gold{% elif r.status=='terminee' %}badge-teal{% elif r.status in ['annulee','refusee'] %}badge-red{% else %}badge-gray{% endif %}" style="flex-shrink:0">
+        {{ {'en_attente':'En attente','confirmee':'Confirmée','terminee':'Terminée','annulee':'Annulée','refusee':'Refusée'}.get(r.status,r.status) }}
+      </span>
     </div>
+    {% if r.status=='en_attente' %}
+    <div class="res-admin-actions">
+      <form method="post" action="/admin/reservation/{{ r.id }}/action">
+        <input type="hidden" name="action" value="confirmer">
+        <button type="submit" class="act act-confirm">✓ Confirmer</button>
+      </form>
+      <form method="post" action="/admin/reservation/{{ r.id }}/action">
+        <input type="hidden" name="action" value="refuser">
+        <button type="submit" class="act act-refuse">✕ Refuser</button>
+      </form>
+    </div>
+    {% elif r.status=='confirmee' %}
+    <div class="res-admin-actions">
+      <form method="post" action="/admin/reservation/{{ r.id }}/action">
+        <input type="hidden" name="action" value="terminer">
+        <button type="submit" class="act act-done">🏁 Clôturer la location</button>
+      </form>
+    </div>
+    {% endif %}
   </div>
-  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
-      <thead><tr><th>Client</th><th>Véhicule</th><th>Dates</th><th>Total</th><th>Statut</th><th>Actions</th></tr></thead>
-      <tbody>
-      {% for r in reservations %}
-      <tr>
-        <td>
-          <strong>{{ r.first_name }} {{ r.last_name }}</strong><br>
-          <span style="font-size:11px;color:var(--text-secondary)">{{ r.email }}</span>
-        </td>
-        <td><strong>{{ r.brand }} {{ r.model }}</strong><br>
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-secondary)">{{ r.plate }}</span></td>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-secondary)">{{ r.date_start }}<br>→ {{ r.date_end }}</td>
-        <td><strong style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px">{{ r.total_price }} FCFA</strong></td>
-        <td><span class="badge {% if r.status=='confirmee' %}badge-green{% elif r.status=='en_attente' %}badge-gold{% elif r.status=='terminee' %}badge-teal{% elif r.status in ['annulee','refusee'] %}badge-red{% else %}badge-gray{% endif %}">
-          {{ {'en_attente':'En attente','confirmee':'Confirmée','terminee':'Terminée','annulee':'Annulée','refusee':'Refusée'}.get(r.status,r.status) }}
-        </span></td>
-        <td>
-          {% if r.status=='en_attente' %}
-          <form method="post" action="/admin/reservation/{{ r.id }}/action" style="display:inline">
-            <input type="hidden" name="action" value="confirmer">
-            <button type="submit" class="act act-confirm">✓ Confirmer</button>
-          </form>
-          <form method="post" action="/admin/reservation/{{ r.id }}/action" style="display:inline">
-            <input type="hidden" name="action" value="refuser">
-            <button type="submit" class="act act-refuse">✕ Refuser</button>
-          </form>
-          {% elif r.status=='confirmee' %}
-          <form method="post" action="/admin/reservation/{{ r.id }}/action" style="display:inline">
-            <input type="hidden" name="action" value="terminer">
-            <button type="submit" class="act act-done">Clôturer</button>
-          </form>
-          {% else %}—{% endif %}
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="6" style="text-align:center;padding:48px;color:var(--text-secondary)">Aucune réservation</td></tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
+  {% endfor %}
+  {% else %}
+  <div style="text-align:center;padding:48px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px">
+    <div style="font-size:36px;margin-bottom:12px">📭</div>
+    <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px">Aucune réservation</div>
+    <div style="font-size:13px;color:var(--text-secondary)">Aucune réservation pour ce filtre.</div>
   </div>
+  {% endif %}
 </div>
 {% endblock %}
