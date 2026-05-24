@@ -5,186 +5,194 @@
 <style>
 /* ── HERO ───────────────────────────────────────────── */
 .hero{
-  background:var(--ink);color:var(--paper);
-  padding:80px 48px;display:flex;align-items:center;justify-content:space-between;gap:48px;
-  position:relative;overflow:hidden;
+  background: linear-gradient(135deg, #0f1a2e 0%, #111827 60%, #0d2218 100%);
+  color: var(--text-primary);
+  padding:80px 48px; display:flex; align-items:center; justify-content:space-between; gap:48px;
+  position:relative; overflow:hidden; border-bottom: 1px solid var(--border);
+}
+.hero::before{
+  content:''; position:absolute; right:-120px; top:-120px;
+  width:500px; height:500px; border-radius:50%;
+  background: radial-gradient(circle, rgba(16,185,129,.08) 0%, transparent 70%);
+  pointer-events:none;
 }
 .hero::after{
-  content:'';position:absolute;right:-80px;top:-80px;
-  width:400px;height:400px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.05);pointer-events:none;
+  content:''; position:absolute; left:-60px; bottom:-80px;
+  width:300px; height:300px; border-radius:50%;
+  border:1px solid rgba(16,185,129,.06); pointer-events:none;
 }
-.hero-content{max-width:560px;position:relative;z-index:1}
+.hero-content{max-width:560px; position:relative; z-index:1}
 .hero-label{
-  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;
-  text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:20px;
+  font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:20px;
+  opacity:.8;
 }
 .hero-title{
-  font-family:'Syne',sans-serif;font-size:52px;font-weight:800;
-  letter-spacing:-.04em;line-height:1;margin-bottom:20px;
+  font-size:52px; font-weight:800;
+  letter-spacing:-.04em; line-height:1.05; margin-bottom:20px;
+  color: var(--text-primary);
 }
-.hero-title em{color:rgba(255,255,255,.4);font-style:italic}
-.hero-sub{font-size:16px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:36px}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-title em{ color: var(--accent); font-style:italic }
+.hero-sub{ font-size:16px; color: var(--text-secondary); line-height:1.6; margin-bottom:36px }
+.hero-actions{ display:flex; gap:12px; flex-wrap:wrap }
 .hero-btn{
-  padding:13px 28px;border-radius:10px;font-weight:700;font-size:14px;
-  font-family:'Instrument Sans',sans-serif;cursor:pointer;transition:all .15s;
+  padding:13px 28px; border-radius:11px; font-weight:700; font-size:14px;
+  font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all .18s;
+  display:inline-block;
 }
-.hero-btn-primary{background:var(--paper);color:var(--ink)}
-.hero-btn-primary:hover{background:#e8e5e0}
-.hero-btn-outline{background:transparent;color:rgba(255,255,255,.8);border:1.5px solid rgba(255,255,255,.2)}
-.hero-btn-outline:hover{border-color:rgba(255,255,255,.5);color:#fff}
+.hero-btn-primary{
+  background: linear-gradient(135deg, var(--accent) 0%, #0d9668 100%);
+  color:#fff;
+  box-shadow: 0 0 0 1px rgba(16,185,129,.4), 0 4px 16px rgba(16,185,129,.22);
+}
+.hero-btn-primary:hover{
+  transform:translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(16,185,129,.5), 0 6px 22px rgba(16,185,129,.3);
+}
+.hero-btn-outline{
+  background:transparent; color:var(--text-secondary);
+  border:1px solid var(--border-hover);
+}
+.hero-btn-outline:hover{ border-color:var(--accent); color:var(--text-primary); }
 
 .hero-stats{
-  display:flex;flex-direction:column;gap:16px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;padding:28px 32px;min-width:220px;position:relative;z-index:1;
+  display:flex; flex-direction:column; gap:16px;
+  background: rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:16px; padding:28px 32px; min-width:220px;
+  position:relative; z-index:1;
+  backdrop-filter: blur(10px);
 }
-.hero-stat-val{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-.04em;line-height:1}
-.hero-stat-label{font-size:12px;color:rgba(255,255,255,.4);margin-top:3px;font-family:'DM Mono',monospace;letter-spacing:.06em}
+.hero-stat-val{
+  font-size:36px; font-weight:800; letter-spacing:-.04em; line-height:1;
+  color: var(--text-primary);
+}
+.hero-stat-label{
+  font-size:12px; color:var(--text-muted); margin-top:3px;
+  font-family:'DM Mono',monospace; letter-spacing:.06em;
+}
 
 /* ── SECTION LABEL ──────────────────────────────────── */
 .section-label-outer{
-  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--ink-40);margin-bottom:16px;
-  display:flex;align-items:center;gap:10px;
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--text-muted); margin-bottom:16px;
+  display:flex; align-items:center; gap:10px;
 }
-.section-label-outer::after{content:'';flex:1;height:1px;background:var(--ink-15)}
+.section-label-outer::after{ content:''; flex:1; height:1px; background:var(--border) }
 
 /* ── VEHICLE CARDS ──────────────────────────────────── */
 .vcard{
-  background:#fff;border:1px solid var(--ink-15);border-radius:14px;
-  overflow:hidden;transition:all .2s;display:flex;flex-direction:column;
+  background: var(--bg-card);
+  border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; transition:all .2s; display:flex; flex-direction:column;
 }
-.vcard:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.07)}
+.vcard:hover{
+  transform:translateY(-3px);
+  border-color: var(--border-hover);
+  box-shadow: 0 12px 40px rgba(0,0,0,.4);
+}
 .vcard-img{
-  height:180px;background:var(--ink-07);
-  display:flex;align-items:center;justify-content:center;
-  font-size:56px;border-bottom:1px solid var(--ink-15);
+  height:180px; background: var(--bg-elevated);
+  display:flex; align-items:center; justify-content:center;
+  font-size:56px; border-bottom:1px solid var(--border);
 }
-.vcard-body{padding:20px;flex:1;display:flex;flex-direction:column}
+.vcard-body{ padding:20px; flex:1; display:flex; flex-direction:column }
 .vcard-cat{
-  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--ink-40);margin-bottom:6px;
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;
 }
-.vcard-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
-.vcard-rating{font-size:12px;color:var(--ink-70);display:flex;align-items:center;gap:4px;margin-bottom:12px}
-.vcard-specs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.vcard-title{ font-size:17px; font-weight:700; margin-bottom:4px; color:var(--text-primary); }
+.vcard-rating{ font-size:12px; color:var(--text-secondary); display:flex; align-items:center; gap:4px; margin-bottom:12px }
+.vcard-specs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px }
 .spec-tag{
-  font-size:11px;padding:3px 8px;border-radius:6px;
-  background:var(--ink-07);color:var(--ink-70);border:1px solid var(--ink-15);
+  font-size:11px; padding:3px 8px; border-radius:6px;
+  background: var(--bg-elevated); color:var(--text-secondary); border:1px solid var(--border);
 }
 .vcard-footer{
-  margin-top:auto;display:flex;align-items:center;justify-content:space-between;
-  padding-top:14px;border-top:1px solid var(--ink-15);
+  margin-top:auto; display:flex; align-items:center; justify-content:space-between;
+  padding-top:14px; border-top:1px solid var(--border);
 }
-.vcard-price{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.03em}
-.vcard-price span{font-family:'Instrument Sans',sans-serif;font-size:12px;font-weight:400;color:var(--ink-40)}
+.vcard-price{ font-size:22px; font-weight:800; letter-spacing:-.03em; color:var(--text-primary); }
+.vcard-price span{ font-size:12px; font-weight:400; color:var(--text-muted) }
 
-/* grille véhicules : 3 → 2 → 1 */
-.vehicles-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-}
+.vehicles-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
 
 /* ── HOW IT WORKS ───────────────────────────────────── */
-.how-step{display:flex;gap:20px;align-items:flex-start;padding:24px 0;border-bottom:1px solid var(--ink-15)}
-.how-step:last-child{border-bottom:none}
+.how-step{
+  display:flex; gap:20px; align-items:flex-start;
+  padding:24px 0; border-bottom:1px solid var(--border);
+}
+.how-step:last-child{ border-bottom:none }
 .how-num{
-  width:44px;height:44px;border-radius:12px;background:var(--ink);
-  color:var(--paper);font-family:'DM Mono',monospace;font-size:15px;font-weight:500;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:44px; height:44px; border-radius:12px;
+  background: var(--accent-dim); border:1px solid rgba(16,185,129,.25);
+  color:var(--accent); font-family:'DM Mono',monospace; font-size:15px; font-weight:500;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-.how-title{font-weight:700;font-size:16px;margin-bottom:4px}
-.how-desc{font-size:14px;color:var(--ink-70);line-height:1.6}
+.how-title{ font-weight:700; font-size:16px; margin-bottom:4px; color:var(--text-primary); }
+.how-desc{ font-size:14px; color:var(--text-secondary); line-height:1.6 }
 
-/* grille "comment / pourquoi" : 2 colonnes → 1 */
-.how-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:48px;
-  align-items:start;
-}
+.how-grid{ display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
 
 /* ── CTA BAND ───────────────────────────────────────── */
 .cta-band{
-  background:var(--accent);color:#fff;
-  border-radius:16px;padding:48px;margin:48px 0;
-  display:flex;align-items:center;justify-content:space-between;gap:32px;
+  background: linear-gradient(135deg, #064e35 0%, #065f46 50%, #047857 100%);
+  border: 1px solid rgba(16,185,129,.3);
+  border-radius:16px; padding:48px; margin:48px 0;
+  display:flex; align-items:center; justify-content:space-between; gap:32px;
+  position:relative; overflow:hidden;
 }
-.cta-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
-.cta-sub{font-size:15px;color:rgba(255,255,255,.65);line-height:1.5}
+.cta-band::before{
+  content:''; position:absolute; right:-60px; top:-60px;
+  width:250px; height:250px; border-radius:50%;
+  background: rgba(255,255,255,.05); pointer-events:none;
+}
+.cta-title{ font-size:28px; font-weight:800; letter-spacing:-.03em; margin-bottom:8px; color:#fff; }
+.cta-sub{ font-size:15px; color:rgba(255,255,255,.65); line-height:1.5 }
 .cta-btn{
-  white-space:nowrap;padding:14px 32px;border-radius:10px;
-  background:var(--paper);color:var(--ink);font-weight:700;font-size:14px;
-  font-family:'Instrument Sans',sans-serif;cursor:pointer;transition:all .15s;flex-shrink:0;
+  white-space:nowrap; padding:14px 32px; border-radius:10px;
+  background:#fff; color:#065f46; font-weight:800; font-size:14px;
+  font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all .18s;
+  flex-shrink:0; display:inline-block;
+  box-shadow: 0 4px 14px rgba(0,0,0,.2);
 }
-.cta-btn:hover{background:#e8e5e0}
+.cta-btn:hover{ transform:translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
 
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE — TABLETTE  (≤ 900 px)
-   ═══════════════════════════════════════════════════════ */
+/* ── FEATURE ICONS ──────────────────────────────────── */
+.feature-icon{
+  width:40px; height:40px; border-radius:10px;
+  background: var(--accent-dim); border:1px solid rgba(16,185,129,.2);
+  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
 @media(max-width:900px){
-  .hero{
-    padding:56px 32px;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:32px;
-  }
-  .hero-title{font-size:40px}
-  .hero-stats{
-    width:100%;
-    flex-direction:row;
-    flex-wrap:wrap;
-    gap:12px;
-    padding:20px 24px;
-    min-width:0;
-  }
-  .hero-stats > div{flex:1;min-width:120px}
-  .hero-stat-val{font-size:28px}
-
-  .vehicles-grid{grid-template-columns:repeat(2,1fr)}
-
-  .how-grid{
-    grid-template-columns:1fr;
-    gap:32px;
-  }
-
-  .cta-band{
-    flex-direction:column;
-    align-items:flex-start;
-    padding:32px;
-    gap:20px;
-  }
-  .cta-btn{width:100%;text-align:center}
+  .hero{ padding:56px 32px; flex-direction:column; align-items:flex-start; gap:32px; }
+  .hero-title{ font-size:40px }
+  .hero-stats{ width:100%; flex-direction:row; flex-wrap:wrap; gap:12px; padding:20px 24px; min-width:0; }
+  .hero-stats > div{ flex:1; min-width:120px }
+  .hero-stat-val{ font-size:28px }
+  .vehicles-grid{ grid-template-columns:repeat(2,1fr) }
+  .how-grid{ grid-template-columns:1fr; gap:32px; }
+  .cta-band{ flex-direction:column; align-items:flex-start; padding:32px; gap:20px; }
+  .cta-btn{ width:100%; text-align:center }
 }
-
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE  (≤ 560 px)
-   ═══════════════════════════════════════════════════════ */
 @media(max-width:560px){
-  .hero{padding:40px 20px;gap:28px}
-  .hero-title{font-size:32px}
-  .hero-sub{font-size:14px;margin-bottom:24px}
-  .hero-actions{flex-direction:column;gap:10px}
-  .hero-btn{width:100%;text-align:center;padding:14px 20px}
-  .hero-stats{gap:8px;padding:16px}
-  .hero-stats > div{min-width:calc(50% - 4px)}
-  .hero-stat-val{font-size:24px}
-
-  .vehicles-grid{grid-template-columns:1fr}
-
-  .section-label-outer{font-size:9px}
-
-  .how-num{width:36px;height:36px;font-size:13px;border-radius:9px}
-  .how-title{font-size:14px}
-
-  .cta-band{padding:24px 20px;border-radius:12px;margin:32px 0}
-  .cta-title{font-size:22px}
-  .cta-sub{font-size:13px}
-
-  .container{padding-left:20px;padding-right:20px}
+  .hero{ padding:40px 20px; gap:28px }
+  .hero-title{ font-size:32px }
+  .hero-sub{ font-size:14px; margin-bottom:24px }
+  .hero-actions{ flex-direction:column; gap:10px }
+  .hero-btn{ width:100%; text-align:center; padding:14px 20px }
+  .hero-stats{ gap:8px; padding:16px }
+  .hero-stats > div{ min-width:calc(50% - 4px) }
+  .hero-stat-val{ font-size:24px }
+  .vehicles-grid{ grid-template-columns:1fr }
+  .how-num{ width:36px; height:36px; font-size:13px; border-radius:9px }
+  .how-title{ font-size:14px }
+  .cta-band{ padding:24px 20px; border-radius:12px; margin:32px 0 }
+  .cta-title{ font-size:22px }
+  .cta-sub{ font-size:13px }
+  .container{ padding-left:20px; padding-right:20px }
 }
 </style>
 {% endblock %}
@@ -223,7 +231,7 @@
   <section style="padding:56px 0 0">
     <div class="section-label-outer">Sélection du moment</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;flex-wrap:wrap;gap:8px">
-      <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em">Nos véhicules populaires</h2>
+      <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--text-primary)">Nos véhicules populaires</h2>
       <a href="/catalogue" style="font-size:13px;font-weight:600;color:var(--accent)">Voir tout →</a>
     </div>
     <div class="vehicles-grid">
@@ -244,7 +252,7 @@
           <div class="vcard-rating">
             <span class="star">★</span>
             {{ v.avg_note if v.avg_note else '—' }}
-            <span style="color:var(--ink-40)">({{ v.total_rentals }} locations)</span>
+            <span style="color:var(--text-muted)">({{ v.total_rentals }} locations)</span>
           </div>
           <div class="vcard-specs">
             <span class="spec-tag">{{ v.fuel }}</span>
@@ -267,7 +275,7 @@
     <div class="section-label-outer">Comment ça marche</div>
     <div class="how-grid">
       <div>
-        <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:28px">Réservez en 4 étapes</h2>
+        <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:28px;color:var(--text-primary)">Réservez en 4 étapes</h2>
         <div class="how-step">
           <div class="how-num">01</div>
           <div><div class="how-title">Créez votre compte</div><div class="how-desc">Inscription rapide en 2 minutes. Email, nom, prénom — c'est tout.</div></div>
@@ -286,7 +294,7 @@
         </div>
       </div>
       <div>
-        <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:28px">Pourquoi nous choisir</h2>
+        <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:28px;color:var(--text-primary)">Pourquoi nous choisir</h2>
         {% set features = [
           ('🔒', 'Vérification documentaire', 'Sécurité maximale pour vous et l\'agence. Chaque client est validé avant sa première location.'),
           ('⚡', 'Réservation instantanée', 'Disponibilités en temps réel. Plus besoin d\'appeler pour savoir si un véhicule est libre.'),
@@ -294,11 +302,11 @@
           ('⭐', 'Flotte entretenue', 'Chaque véhicule est contrôlé entre chaque location. Les avis clients guident nos standards.'),
         ] %}
         {% for icon, title, desc in features %}
-        <div style="display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--ink-15)">
-          <div style="width:40px;height:40px;border-radius:10px;background:var(--ink-07);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">{{ icon }}</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)">
+          <div class="feature-icon">{{ icon }}</div>
           <div>
-            <div style="font-weight:700;font-size:15px;margin-bottom:3px">{{ title }}</div>
-            <div style="font-size:13px;color:var(--ink-70);line-height:1.5">{{ desc }}</div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:3px;color:var(--text-primary)">{{ title }}</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">{{ desc }}</div>
           </div>
         </div>
         {% endfor %}
@@ -308,11 +316,11 @@
 
   <!-- CTA -->
   <div class="cta-band">
-    <div>
+    <div style="position:relative;z-index:1">
       <div class="cta-title">Prêt à prendre la route ?</div>
       <div class="cta-sub">Créez votre compte gratuitement et réservez votre premier véhicule en quelques minutes.</div>
     </div>
-    <a href="/inscription" class="cta-btn">Commencer maintenant →</a>
+    <a href="/inscription" class="cta-btn" style="position:relative;z-index:1">Commencer maintenant →</a>
   </div>
 
 </div>
