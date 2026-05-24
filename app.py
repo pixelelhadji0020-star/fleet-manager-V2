@@ -70,37 +70,39 @@ def add_notif(uid, title, msg, t='info'):
         pass
 
 def save_upload(file_obj, prefix):
-    """Sauvegarde un fichier uploadé.
-    - Si Supabase Storage est configuré (bucket fleet-uploads), upload là-bas.
-    - Sinon, sauvegarde en local dans static/uploads/.
+    """Upload vers Supabase Storage (bucket fleet-uploads, PUBLIC).
+    Fallback sur static/uploads/ si Storage indisponible.
     """
     if not file_obj or not file_obj.filename or not allowed_file(file_obj.filename):
         return None
-    ext = file_obj.filename.rsplit('.', 1)[1].lower()
-    fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
-    file_bytes = file_obj.read()
+    try:
+        ext  = file_obj.filename.rsplit('.', 1)[1].lower()
+        fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
+        data  = file_obj.read()
+        mime  = file_obj.content_type or 'application/octet-stream'
 
-    # Tentative Supabase Storage
-    if SUPABASE_URL and SUPABASE_KEY:
-        try:
-            client = sb()
-            bucket = 'fleet-uploads'
-            client.storage.from_(bucket).upload(
-                fname,
-                file_bytes,
-                {"content-type": file_obj.content_type or "application/octet-stream",
-                 "upsert": "true"}
-            )
-            return client.storage.from_(bucket).get_public_url(fname)
-        except Exception as e:
-            app.logger.warning(f"Supabase Storage indisponible, fallback local: {e}")
+        # ── Supabase Storage ──────────────────────────────────────
+        if SUPABASE_URL and SUPABASE_KEY:
+            try:
+                client = sb()
+                client.storage.from_('fleet-uploads').upload(
+                    path=fname,
+                    file=data,
+                    file_options={"contentType": mime, "upsert": True}
+                )
+                return client.storage.from_('fleet-uploads').get_public_url(fname)
+            except Exception as e:
+                app.logger.warning(f"Storage fallback local: {e}")
 
-    # Fallback filesystem local
-    upload_dir = os.path.join(_root, 'static', 'uploads')
-    os.makedirs(upload_dir, exist_ok=True)
-    with open(os.path.join(upload_dir, fname), 'wb') as fout:
-        fout.write(file_bytes)
-    return fname
+        # ── Fallback local ────────────────────────────────────────
+        upload_dir = os.path.join(_root, 'static', 'uploads')
+        os.makedirs(upload_dir, exist_ok=True)
+        with open(os.path.join(upload_dir, fname), 'wb') as fout:
+            fout.write(data)
+        return fname
+    except Exception as e:
+        app.logger.error(f"save_upload error: {e}")
+        return None
 
 # ─── PUBLIC ───────────────────────────────────
 @app.route('/')
