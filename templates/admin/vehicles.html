@@ -4,7 +4,7 @@
 <style>
 /* ── ADMIN NAV ──────────────────────────────────────── */
 .admin-nav{
-  background:#fff;border-bottom:1px solid var(--ink-15);
+  background:var(--bg-card);border-bottom:1px solid var(--border);
   padding:0 48px;display:flex;gap:4px;overflow-x:auto;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;          /* Firefox */
@@ -12,15 +12,15 @@
 .admin-nav::-webkit-scrollbar{display:none} /* Chrome/Safari */
 .admin-nav a{
   font-size:12.5px;font-weight:500;padding:12px 16px;
-  color:var(--ink-70);border-bottom:2px solid transparent;
+  color:var(--text-secondary);border-bottom:2px solid transparent;
   white-space:nowrap;transition:all .15s;
 }
-.admin-nav a:hover{color:var(--ink)}
-.admin-nav a.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+.admin-nav a:hover{color:var(--text-primary)}
+.admin-nav a.active{color:var(--text-primary);border-bottom-color:var(--text-primary);font-weight:600}
 
 /* ── TABLE WRAPPER — défilement horizontal sur mobile ── */
 .table-scroll{
-  background:#fff;border:1px solid var(--ink-15);border-radius:12px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
 }
@@ -75,7 +75,7 @@
 
 <div class="container" style="padding-top:32px;padding-bottom:60px">
   <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-    <h1 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em">
+    <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em">
       Flotte — {{ vehicles|length }} véhicules
     </h1>
     <a href="/admin/vehicule/ajouter" class="btn btn-primary">+ Ajouter un véhicule</a>
@@ -102,11 +102,11 @@
       <tr>
         <td>
           <strong>{{ v.brand }} {{ v.model }}</strong><br>
-          <span style="font-size:11px;color:var(--ink-70)">{{ v.year }} · {{ v.fuel }}</span>
+          <span style="font-size:11px;color:var(--text-secondary)">{{ v.year }} · {{ v.fuel }}</span>
         </td>
         <td style="font-family:'DM Mono',monospace;font-size:12px">{{ v.plate }}</td>
         <td>{{ v.category }}</td>
-        <td style="font-family:'Syne',sans-serif;font-weight:700">{{ v.price_per_day }} FCFA</td>
+        <td style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700">{{ v.price_per_day }} FCFA</td>
         <td>
           <span class="badge {% if v.status=='disponible' %}badge-green{% elif v.status=='louee' %}badge-gold{% else %}badge-red{% endif %}">
             {{ {'disponible':'Disponible','louee':'En location','hors_service':'Hors service'}.get(v.status,v.status) }}

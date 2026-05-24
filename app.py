@@ -68,7 +68,11 @@ def save_upload(file_obj, prefix):
         return None
     ext = file_obj.filename.rsplit('.', 1)[1].lower()
     fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
-    upload_dir = os.path.join(_root, 'static', 'uploads')
+    # Sur Vercel, /tmp est le seul dossier writable ; en local on utilise static/uploads
+    if os.environ.get('VERCEL'):
+        upload_dir = '/tmp/uploads'
+    else:
+        upload_dir = os.path.join(_root, 'static', 'uploads')
     os.makedirs(upload_dir, exist_ok=True)
     file_obj.save(os.path.join(upload_dir, fname))
     return fname
@@ -576,6 +580,8 @@ def admin_stats():
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
+    if os.environ.get('VERCEL'):
+        return send_from_directory('/tmp/uploads', filename)
     return send_from_directory(os.path.join(_root, 'static', 'uploads'), filename)
 
 # ─── BOOT ──────────────────────────────────────

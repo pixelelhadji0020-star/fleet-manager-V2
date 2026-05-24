@@ -2,23 +2,23 @@
 {% block title %}Catalogue{% endblock %}
 {% block extra_css %}
 <style>
-.filter-bar{background:#fff;border:1px solid var(--ink-15);border-radius:14px;padding:20px 24px;margin-bottom:28px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.filter-bar{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:28px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
 .filter-bar .form-group{margin-bottom:0;flex:1;min-width:130px}
 .vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.vcard{background:#fff;border:1px solid var(--ink-15);border-radius:14px;overflow:hidden;transition:all .2s;display:flex;flex-direction:column}
+.vcard{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .2s;display:flex;flex-direction:column}
 .vcard:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.06)}
-.vcard-img{height:160px;background:var(--ink-07);display:flex;align-items:center;justify-content:center;font-size:52px;border-bottom:1px solid var(--ink-15)}
+.vcard-img{height:160px;background:var(--bg-elevated);display:flex;align-items:center;justify-content:center;font-size:52px;border-bottom:1px solid var(--border)}
 .vcard-body{padding:18px;flex:1;display:flex;flex-direction:column}
-.vcard-cat{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-40);margin-bottom:5px}
-.vcard-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
+.vcard-cat{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px}
+.vcard-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
 .vcard-specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.spec-tag{font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--ink-07);color:var(--ink-70);border:1px solid var(--ink-15)}
-.vcard-footer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--ink-15)}
-.vcard-price{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em}
-.vcard-price span{font-size:12px;font-weight:400;color:var(--ink-40);font-family:'Instrument Sans',sans-serif}
+.spec-tag{font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--bg-elevated);color:var(--text-secondary);border:1px solid var(--border)}
+.vcard-footer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border)}
+.vcard-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.vcard-price span{font-size:12px;font-weight:400;color:var(--text-muted);font-family:'Plus Jakarta Sans',sans-serif}
 .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 .dot-green{background:#2a9d4a}.dot-red{background:#c0392b}.dot-gray{background:#888}
-.no-results{text-align:center;padding:64px 0;color:var(--ink-40)}
+.no-results{text-align:center;padding:64px 0;color:var(--text-muted)}
 .no-results-icon{font-size:48px;margin-bottom:12px}
 </style>
 {% endblock %}
@@ -63,7 +63,7 @@
       <div class="vcard-body">
         <div class="vcard-cat">{{ v.category }}</div>
         <div class="vcard-title">{{ v.brand }} {{ v.model }}</div>
-        <div style="font-size:12px;color:var(--ink-70);margin-bottom:8px">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">
           <span class="status-dot {% if v.status=='disponible' %}dot-green{% elif v.status=='louee' %}dot-red{% else %}dot-gray{% endif %}"></span>
           {{ 'Disponible' if v.status=='disponible' else 'En location' if v.status=='louee' else v.status }}
           {% if v.avg_note %} · <span class="star">★</span> {{ v.avg_note }}{% endif %}
