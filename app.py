@@ -13,6 +13,19 @@ app = Flask(__name__,
             template_folder=os.path.join(_root, 'templates'),
             static_folder=os.path.join(_root, 'static'))
 app.secret_key = os.environ.get('SECRET_KEY', 'fleet-secret-2025')
+
+@app.template_filter('img_url')
+def img_url_filter(image):
+    """Normalise une valeur image en URL affichable.
+    - URL complète (http/https) → retournée telle quelle
+    - Nom de fichier local → '/uploads/fichier.jpg'  
+    - None/vide → chaîne vide
+    """
+    if not image:
+        return ''
+    if image.startswith('http'):
+        return image
+    return f'/uploads/{image}'
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 ALLOWED_EXT = {'pdf', 'png', 'jpg', 'jpeg'}
 
@@ -70,38 +83,28 @@ def add_notif(uid, title, msg, t='info'):
         pass
 
 def save_upload(file_obj, prefix):
-    """Upload vers Supabase Storage (bucket fleet-uploads, PUBLIC).
-    Fallback sur static/uploads/ si Storage indisponible.
+    """Upload vers Supabase Storage (bucket: fleet-uploads, PUBLIC).
+    Retourne l'URL publique complète (https://...) ou None si échec.
+    IMPORTANT : le bucket doit être créé dans Supabase → Storage → New bucket
+                Nom: fleet-uploads  |  Public: OUI
     """
     if not file_obj or not file_obj.filename or not allowed_file(file_obj.filename):
         return None
     try:
-        ext  = file_obj.filename.rsplit('.', 1)[1].lower()
+        ext   = file_obj.filename.rsplit('.', 1)[1].lower()
         fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
         data  = file_obj.read()
-        mime  = file_obj.content_type or 'application/octet-stream'
-
-        # ── Supabase Storage ──────────────────────────────────────
-        if SUPABASE_URL and SUPABASE_KEY:
-            try:
-                client = sb()
-                client.storage.from_('fleet-uploads').upload(
-                    path=fname,
-                    file=data,
-                    file_options={"contentType": mime, "upsert": True}
-                )
-                return client.storage.from_('fleet-uploads').get_public_url(fname)
-            except Exception as e:
-                app.logger.warning(f"Storage fallback local: {e}")
-
-        # ── Fallback local ────────────────────────────────────────
-        upload_dir = os.path.join(_root, 'static', 'uploads')
-        os.makedirs(upload_dir, exist_ok=True)
-        with open(os.path.join(upload_dir, fname), 'wb') as fout:
-            fout.write(data)
-        return fname
+        mime  = file_obj.content_type or f"image/{ext}"
+        client = sb()
+        client.storage.from_('fleet-uploads').upload(
+            path=fname,
+            file=data,
+            file_options={"contentType": mime, "upsert": "true"}
+        )
+        url = client.storage.from_('fleet-uploads').get_public_url(fname)
+        return url
     except Exception as e:
-        app.logger.error(f"save_upload error: {e}")
+        app.logger.error(f"[save_upload] Erreur Supabase Storage: {e}")
         return None
 
 # ─── PUBLIC ───────────────────────────────────
