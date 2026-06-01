@@ -84,9 +84,12 @@ def add_notif(uid, title, msg, t='info'):
 
 def save_upload(file_obj, prefix):
     """Upload vers Supabase Storage (bucket: fleet-uploads, PUBLIC).
-    Retourne l'URL publique complète (https://...) ou None si échec.
-    IMPORTANT : le bucket doit être créé dans Supabase → Storage → New bucket
-                Nom: fleet-uploads  |  Public: OUI
+    
+    Clés file_options correctes pour storage3 v2.x :
+      - "content-type"  : MIME type (pas "contentType")
+      - "upsert"        : "true" ou "false" (string, pas booléen)
+    
+    Retourne l'URL publique complète ou None si échec.
     """
     if not file_obj or not file_obj.filename or not allowed_file(file_obj.filename):
         return None
@@ -94,14 +97,23 @@ def save_upload(file_obj, prefix):
         ext   = file_obj.filename.rsplit('.', 1)[1].lower()
         fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
         data  = file_obj.read()
-        mime  = file_obj.content_type or f"image/{ext}"
+
+        # Déterminer le MIME type correct
+        mime_map = {"jpg": "image/jpeg", "jpeg": "image/jpeg",
+                    "png": "image/png",  "pdf": "application/pdf"}
+        mime = mime_map.get(ext, f"image/{ext}")
+
         client = sb()
-        client.storage.from_('fleet-uploads').upload(
+        # Clés exactes attendues par storage3 v2.x
+        client.storage.from_("fleet-uploads").upload(
             path=fname,
             file=data,
-            file_options={"contentType": mime, "upsert": "true"}
+            file_options={
+                "content-type": mime,   # tiret obligatoire, pas camelCase
+                "upsert": "true"        # string, pas booléen
+            }
         )
-        url = client.storage.from_('fleet-uploads').get_public_url(fname)
+        url = client.storage.from_("fleet-uploads").get_public_url(fname)
         return url
     except Exception as e:
         app.logger.error(f"[save_upload] Erreur Supabase Storage: {e}")
