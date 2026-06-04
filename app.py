@@ -16,6 +16,17 @@ app.secret_key = os.environ.get('SECRET_KEY', 'fleet-secret-2025')
 
 @app.template_filter('img_url')
 def img_url_filter(image):
+    """Retourne l'image comme src HTML.
+    - data:image/...;base64,...  → retournée telle quelle
+    - http/https URL             → retournée telle quelle
+    - None/vide                  → chaîne vide (pas d'image cassée)
+    """
+    if not image:
+        return ''
+    if image.startswith('data:') or image.startswith('http'):
+        return image
+    return ''
+def img_url_filter(image):
     """Normalise une valeur image en URL affichable.
     - URL complète (http/https) → retournée telle quelle
     - Nom de fichier local → '/uploads/fichier.jpg'  
@@ -83,40 +94,24 @@ def add_notif(uid, title, msg, t='info'):
         pass
 
 def save_upload(file_obj, prefix):
-    """Upload vers Supabase Storage (bucket: fleet-uploads, PUBLIC).
-    
-    Clés file_options correctes pour storage3 v2.x :
-      - "content-type"  : MIME type (pas "contentType")
-      - "upsert"        : "true" ou "false" (string, pas booléen)
-    
-    Retourne l'URL publique complète ou None si échec.
+    """Encode le fichier en base64 → data URI stockée directement en DB.
+    Fonctionne sur Vercel, Railway ou tout hébergeur sans filesystem.
+    Taille max : 500 KB recommandé (2 MB accepté par Supabase TEXT).
     """
     if not file_obj or not file_obj.filename or not allowed_file(file_obj.filename):
         return None
     try:
-        ext   = file_obj.filename.rsplit('.', 1)[1].lower()
-        fname = secure_filename(f"{prefix}_{int(datetime.now().timestamp())}.{ext}")
-        data  = file_obj.read()
-
-        # Déterminer le MIME type correct
-        mime_map = {"jpg": "image/jpeg", "jpeg": "image/jpeg",
-                    "png": "image/png",  "pdf": "application/pdf"}
-        mime = mime_map.get(ext, f"image/{ext}")
-
-        client = sb()
-        # Clés exactes attendues par storage3 v2.x
-        client.storage.from_("fleet-uploads").upload(
-            path=fname,
-            file=data,
-            file_options={
-                "content-type": mime,   # tiret obligatoire, pas camelCase
-                "upsert": "true"        # string, pas booléen
-            }
-        )
-        url = client.storage.from_("fleet-uploads").get_public_url(fname)
-        return url
+        import base64
+        ext  = file_obj.filename.rsplit('.', 1)[1].lower()
+        mime_map = {'jpg':'image/jpeg', 'jpeg':'image/jpeg',
+                    'png':'image/png',  'gif':'image/gif',
+                    'webp':'image/webp','pdf':'application/pdf'}
+        mime = mime_map.get(ext, f'image/{ext}')
+        data = file_obj.read()
+        b64  = base64.b64encode(data).decode('utf-8')
+        return f'data:{mime};base64,{b64}'
     except Exception as e:
-        app.logger.error(f"[save_upload] Erreur Supabase Storage: {e}")
+        app.logger.error(f"[save_upload] Erreur encodage: {e}")
         return None
 
 # ─── PUBLIC ───────────────────────────────────
