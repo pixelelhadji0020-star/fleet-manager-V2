@@ -1,74 +1,53 @@
 {% extends 'base.html' %}
-{% block title %}Réserver — {{ vehicle.brand }} {{ vehicle.model }}{% endblock %}
+{% block title %}Réserver — {{vehicle.brand}} {{vehicle.model}}{% endblock %}
 {% block extra_js %}
 <script>
-function calcTotal(){
-  const s=document.getElementById('date_start').value;
-  const e=document.getElementById('date_end').value;
-  const price={{ vehicle.price_per_day }};
+function calc(){
+  const s=document.getElementById('ds').value,e=document.getElementById('de').value;
+  const price={{vehicle.price_per_day}};
   if(s&&e){
-    const days=Math.round((new Date(e)-new Date(s))/86400000);
-    if(days>0){
-      document.getElementById('calc').textContent=days+' jour'+(days>1?'s':'')+' × '+price.toLocaleString()+' = '+(days*price).toLocaleString()+' FCFA';
-      document.getElementById('total-box').style.display='flex';
-    } else {
-      document.getElementById('calc').textContent='La date de fin doit être après la date de début.';
-      document.getElementById('total-box').style.display='flex';
-    }
+    const d=Math.round((new Date(e)-new Date(s))/86400000);
+    const box=document.getElementById('cbox');
+    if(d>0){document.getElementById('ctxt').textContent=d+' jour'+(d>1?'s':'')+' × '+price.toLocaleString()+' FCFA = '+(d*price).toLocaleString()+' FCFA';box.style.display='flex';}
+    else{document.getElementById('ctxt').textContent='La date de fin doit être après la date de début.';box.style.display='flex';}
   }
 }
 </script>
 {% endblock %}
 {% block content %}
-<div class="container" style="max-width:560px;padding-top:24px;padding-bottom:60px">
-  <a href="/vehicule/{{ vehicle.id }}" style="font-size:13px;color:var(--text-secondary);display:inline-flex;align-items:center;gap:6px;margin-bottom:20px">← {{ vehicle.brand }} {{ vehicle.model }}</a>
+<div class="wrap" style="max-width:540px;padding-top:24px;padding-bottom:60px">
+  <a href="/vehicule/{{vehicle.id}}" style="font-size:13px;color:var(--txt-2);display:inline-flex;align-items:center;gap:5px;margin-bottom:18px">← {{vehicle.brand}} {{vehicle.model}}</a>
+  <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:20px">Demande de réservation</h1>
 
-  <h1 style="font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:20px">Demande de réservation</h1>
-
-  <!-- RÉSUMÉ VÉHICULE -->
-  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
-    <div style="font-size:38px">{% if vehicle.category=='Citadine' %}🚗{% elif vehicle.category=='SUV' %}🚙{% elif vehicle.category=='Luxe' %}🏎️{% else %}🚘{% endif %}</div>
+  <!-- VEHICLE SUMMARY -->
+  <div style="background:var(--card);border:1px solid var(--bord);border-radius:var(--r);padding:15px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:36px">{% if vehicle.category=='SUV' %}🚙{% elif vehicle.category=='Luxe' %}🏎️{% else %}🚗{% endif %}</div>
     <div>
-      <div style="font-weight:700;font-size:16px;color:var(--text-primary)">{{ vehicle.brand }} {{ vehicle.model }}</div>
-      <div style="font-size:12px;color:var(--text-secondary)">{{ vehicle.category }} · {{ vehicle.fuel }} · {{ vehicle.transmission }}</div>
-      <div style="font-weight:800;font-size:20px;color:var(--text-primary);margin-top:4px">{{ vehicle.price_per_day }} <span style="font-size:12px;font-weight:400;color:var(--text-muted)">FCFA / jour</span></div>
+      <div style="font-weight:700;font-size:15px">{{vehicle.brand}} {{vehicle.model}}</div>
+      <div style="font-size:12px;color:var(--txt-2)">{{vehicle.category}} · {{vehicle.fuel}} · {{vehicle.transmission}}</div>
+      <div style="font-weight:800;font-size:19px;margin-top:4px;letter-spacing:-.03em">{{vehicle.price_per_day}} <span style="font-size:12px;font-weight:400;color:var(--txt-3)">FCFA / jour</span></div>
     </div>
   </div>
 
-  <form method="post" class="card">
-    <!-- DATES — colonnes sur mobile aussi -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div class="form-group" style="margin-bottom:0">
-        <label class="form-label">Début</label>
-        <input class="form-input" type="date" name="date_start" id="date_start" required onchange="calcTotal()">
-      </div>
-      <div class="form-group" style="margin-bottom:0">
-        <label class="form-label">Fin</label>
-        <input class="form-input" type="date" name="date_end" id="date_end" required onchange="calcTotal()">
-      </div>
+  <form method="post" class="card" style="border-radius:var(--r-lg)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="fg" style="margin-bottom:0"><label class="flb">Début</label><input class="fi" type="date" name="date_start" id="ds" required onchange="calc()"></div>
+      <div class="fg" style="margin-bottom:0"><label class="flb">Fin</label><input class="fi" type="date" name="date_end" id="de" required onchange="calc()"></div>
     </div>
-
-    <!-- TOTAL CALCULÉ -->
-    <div id="total-box" style="display:none;background:var(--accent-dim);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:12px 14px;margin-bottom:16px;align-items:center;gap:8px">
-      <span>💰</span>
-      <span id="calc" style="font-weight:700;font-size:14px;color:var(--text-primary)"></span>
+    <div id="cbox" style="display:none;background:var(--gold-dim);border:1px solid var(--gold-bord);border-radius:9px;padding:11px 14px;margin-bottom:14px;align-items:center;gap:8px">
+      <span style="color:var(--gold)">💰</span>
+      <span id="ctxt" style="font-weight:700;font-size:13.5px;color:var(--txt)"></span>
     </div>
-
-    <div class="form-group">
-      <label class="form-label">Notes <span style="color:var(--text-muted);font-weight:400">(optionnel)</span></label>
-      <textarea class="form-textarea" name="notes" placeholder="Demandes particulières, informations complémentaires..." style="min-height:80px"></textarea>
+    <div class="fg">
+      <label class="flb">Notes <span style="font-weight:400;color:var(--txt-3)">(optionnel)</span></label>
+      <textarea class="fta" name="notes" placeholder="Demandes particulières..." style="min-height:74px"></textarea>
     </div>
-
-    <div style="background:var(--bg-elevated);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;color:var(--text-secondary);line-height:1.5;border:1px solid var(--border)">
-      ℹ️ Votre demande sera examinée par notre équipe. Vous serez notifié de la confirmation.
+    <div style="background:var(--bg-2);border-radius:9px;padding:11px 14px;margin-bottom:16px;font-size:12.5px;color:var(--txt-2);line-height:1.5;border:1px solid var(--bord)">
+      ℹ️ Votre demande sera examinée sous 24h. Vous serez notifié par notre équipe.
     </div>
-
-    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:14px">
-      Envoyer la demande →
-    </button>
-
-    <div style="margin-top:12px;text-align:center;font-size:13px;color:var(--text-secondary)">
-      Besoin d'aide ? <a href="tel:776729740" style="color:var(--accent);font-weight:600">📞 77 672 97 40</a>
+    <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;font-size:15px;padding:13px">Envoyer la demande →</button>
+    <div style="margin-top:12px;text-align:center;font-size:12.5px;color:var(--txt-3)">
+      Besoin d'aide ? <a href="tel:776729740" style="color:var(--gold);font-weight:600">📞 77 672 97 40</a>
     </div>
   </form>
 </div>

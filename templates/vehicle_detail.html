@@ -1,186 +1,136 @@
 {% extends 'base.html' %}
-{% block title %}{{ vehicle.brand }} {{ vehicle.model }}{% endblock %}
+{% block title %}{{vehicle.brand}} {{vehicle.model}}{% endblock %}
 {% block extra_css %}
 <style>
-/* ── STICKY BOTTOM BAR (mobile) ── */
-.sticky-bar{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;z-index:90;
-  background:var(--bg-card);border-top:1px solid var(--border);
-  padding:12px 16px;
-  box-shadow:0 -4px 20px rgba(0,0,0,.4);
-}
-.sticky-bar-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.sticky-price{font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--text-primary)}
-.sticky-price small{font-size:11px;font-weight:400;color:var(--text-muted);display:block}
-
-/* ── SPEC GRID ── */
-.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
-.spec-item{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.spec-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;font-weight:500}
-.spec-val{font-weight:700;font-size:14px;color:var(--text-primary)}
-
-/* ── BOOKING CARD (desktop) ── */
-.booking-card{display:none}
-
-/* ── REVIEWS ── */
-.review-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
-.review-notes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.review-note{font-size:11px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--text-secondary)}
-
-/* ── DESKTOP ── */
+.sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;background:rgba(22,27,39,.97);backdrop-filter:blur(20px);border-top:1px solid var(--bord);padding:12px 16px;box-shadow:0 -4px 24px rgba(0,0,0,.5)}
+.sticky-inner{display:flex;align-items:center;gap:12px}
+.sticky-price{font-size:19px;font-weight:800;letter-spacing:-.03em}
+.sticky-price small{font-size:11px;font-weight:400;color:var(--txt-3);display:block;margin-top:1px}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px}
+.spec-item{background:var(--bg-1);border:1px solid var(--bord);border-radius:10px;padding:11px 13px}
+.spec-lbl{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-3);margin-bottom:3px;font-weight:500}
+.spec-val{font-weight:700;font-size:13.5px}
+.book-card{display:none}
+.rv-card{background:var(--card);border:1px solid var(--bord);border-radius:var(--r);padding:15px;margin-bottom:10px}
+.star{color:var(--gold);font-size:13px}
 @media(min-width:768px){
-  .detail-layout{display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:start}
-  .sticky-bar{display:none !important}
-  .booking-card{display:block;position:sticky;top:80px}
+  .dtl-layout{display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start}
+  .sticky-cta{display:none!important}
+  .book-card{display:block;position:sticky;top:80px}
   .spec-grid{grid-template-columns:repeat(3,1fr)}
 }
-@media(max-width:767px){
-  .sticky-bar{display:block}
-  .detail-col{padding-bottom:90px}
-}
+@media(max-width:767px){.sticky-cta{display:block}.dtl-col{padding-bottom:90px}}
 </style>
 {% endblock %}
 {% block content %}
-<div class="container" style="padding-top:24px;padding-bottom:32px">
-  <a href="/catalogue" style="font-size:13px;color:var(--text-secondary);display:inline-flex;align-items:center;gap:6px;margin-bottom:20px">← Catalogue</a>
-
-  <div class="detail-layout">
-    <div class="detail-col">
+<div class="wrap" style="padding-top:22px;padding-bottom:32px">
+  <a href="/catalogue" style="font-size:13px;color:var(--txt-2);display:inline-flex;align-items:center;gap:5px;margin-bottom:18px">← Catalogue</a>
+  <div class="dtl-layout">
+    <div class="dtl-col">
       <!-- IMAGE -->
-      <div style="height:240px;background:var(--bg-elevated);border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-bottom:20px;display:flex;align-items:center;justify-content:center">
+      <div style="height:230px;background:var(--bg-2);border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--bord);margin-bottom:18px;display:flex;align-items:center;justify-content:center">
         {% if vehicle.image %}
-          <img src="{{ vehicle.image | img_url }}" alt="{{ vehicle.brand }} {{ vehicle.model }}" style="width:100%;height:100%;object-fit:cover">
+          {% if vehicle.image.startswith('data:') or vehicle.image.startswith('http') %}<img src="{{vehicle.image}}" alt="{{vehicle.brand}} {{vehicle.model}}" style="width:100%;height:100%;object-fit:cover">
+          {% else %}<img src="/uploads/{{vehicle.image}}" alt="{{vehicle.brand}} {{vehicle.model}}" style="width:100%;height:100%;object-fit:cover">{% endif %}
         {% else %}
-          <span style="font-size:80px">{% if vehicle.category=='Citadine' %}🚗{% elif vehicle.category=='SUV' %}🚙{% elif vehicle.category=='Luxe' %}🏎️{% elif vehicle.category=='Utilitaire' %}🚐{% else %}🚘{% endif %}</span>
+          <span style="font-size:72px">{% if vehicle.category=='SUV' %}🚙{% elif vehicle.category=='Luxe' %}🏎️{% elif vehicle.category=='Utilitaire' %}🚐{% else %}🚗{% endif %}</span>
         {% endif %}
       </div>
 
-      <!-- TITRE + NOTE -->
-      <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
-          <h1 style="font-size:24px;font-weight:800;letter-spacing:-.03em">{{ vehicle.brand }} {{ vehicle.model }}</h1>
-          <span class="badge badge-gray">{{ vehicle.category }}</span>
-          <span class="badge {% if vehicle.status=='disponible' %}badge-green{% elif vehicle.status=='louee' %}badge-gold{% else %}badge-red{% endif %}">
-            {{ 'Disponible' if vehicle.status=='disponible' else 'En location' if vehicle.status=='louee' else 'Hors service' }}
+      <!-- HEADER -->
+      <div style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+          <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em">{{vehicle.brand}} {{vehicle.model}}</h1>
+          <span class="tag tag-gray" style="font-size:10.5px">{{vehicle.category}}</span>
+          <span class="tag {{'tag-green' if vehicle.status=='disponible' else 'tag-amber' if vehicle.status=='louee' else 'tag-red'}}">
+            {{'Disponible' if vehicle.status=='disponible' else 'En location' if vehicle.status=='louee' else 'Hors service'}}
           </span>
         </div>
-        {% if avg and avg.avg_note %}
-        <div style="display:flex;align-items:center;gap:6px;color:var(--text-secondary);font-size:13px">
-          <span class="star">★</span>
-          <strong>{{ avg.avg_note }}/5</strong>
-          <span style="color:var(--text-muted)">— {{ avg.total }} avis</span>
-        </div>
-        {% endif %}
+        {% if avg %}<div style="font-size:13px;color:var(--txt-2)"><span class="star">★</span> <strong>{{avg.avg_note}}/5</strong> <span style="color:var(--txt-3)">— {{avg.total}} avis</span></div>{% endif %}
       </div>
 
-      <!-- PRIX MOBILE -->
-      <div style="background:var(--accent-dim);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--text-primary)">{{ vehicle.price_per_day }} FCFA</div>
-          <div style="font-size:12px;color:var(--text-muted)">par jour TTC · Immat. {{ vehicle.plate }}</div>
-        </div>
+      <!-- PRIX BANNER (mobile) -->
+      <div style="background:var(--gold-dim);border:1px solid var(--gold-bord);border-radius:var(--r);padding:13px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:24px;font-weight:800;letter-spacing:-.04em">{{vehicle.price_per_day}} FCFA</div><div style="font-size:11.5px;color:var(--txt-3)">par jour TTC · {{vehicle.plate}}</div></div>
       </div>
 
       <!-- SPECS -->
       <div class="spec-grid">
-        {% for label, val in [('Carburant',vehicle.fuel),('Transmission',vehicle.transmission),('Places',vehicle.seats|string+' places'),('Couleur',vehicle.color or '—'),('Année',vehicle.year|string),('Kilométrage',(vehicle.mileage|string)+' km')] %}
-        <div class="spec-item">
-          <div class="spec-label">{{ label }}</div>
-          <div class="spec-val">{{ val }}</div>
-        </div>
+        {% for lbl,val in [('Carburant',vehicle.fuel),('Transmission',vehicle.transmission),('Places',(vehicle.seats|string)+' places'),('Couleur',vehicle.color or '—'),('Année',vehicle.year|string),('Kilométrage',(vehicle.mileage|string)+' km')] %}
+        <div class="spec-item"><div class="spec-lbl">{{lbl}}</div><div class="spec-val">{{val}}</div></div>
         {% endfor %}
       </div>
 
-      <!-- DESCRIPTION -->
-      {% if vehicle.description %}
-      <p style="color:var(--text-secondary);line-height:1.7;margin-bottom:24px;font-size:14px">{{ vehicle.description }}</p>
-      {% endif %}
+      {% if vehicle.description %}<p style="color:var(--txt-2);line-height:1.7;margin-bottom:22px;font-size:13.5px">{{vehicle.description}}</p>{% endif %}
 
       <!-- SUPPORT -->
-      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
-        <span style="font-size:22px">📞</span>
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text-primary)">Besoin d'aide ?</div>
-          <a href="tel:776729740" style="font-size:14px;color:var(--accent);font-weight:700">77 672 97 40</a>
-        </div>
+      <div style="background:var(--bg-1);border:1px solid var(--bord);border-radius:var(--r);padding:13px 16px;margin-bottom:22px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:20px">📞</span>
+        <div><div style="font-size:13px;font-weight:600">Besoin d'aide pour réserver ?</div><a href="tel:776729740" style="font-size:14px;color:var(--gold);font-weight:700">77 672 97 40</a></div>
       </div>
 
       <!-- AVIS -->
       {% if reviews %}
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:14px">Avis clients</h2>
+      <h2 style="font-size:17px;font-weight:700;margin-bottom:13px">Avis clients</h2>
       {% for r in reviews %}
-      <div class="review-card">
+      <div class="rv-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <strong style="font-size:14px">{{ r.first_name }} {{ r.last_name[0] }}.</strong>
-          <div style="font-size:11px;color:var(--text-muted)">{{ r.created_at[:10] }}</div>
+          <strong style="font-size:13.5px">{{r.first_name}} {{r.last_name[0]}}.</strong>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txt-3)">{{r.created_at[:10]}}</span>
         </div>
-        <div class="review-notes">
-          <span class="review-note">Confort ★{{ r.comfort_note }}</span>
-          <span class="review-note">Propreté ★{{ r.cleanliness_note }}</span>
-          <span class="review-note">Fiabilité ★{{ r.reliability_note }}</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+          {% for lbl,note in [('Confort',r.comfort_note),('Propreté',r.cleanliness_note),('Fiabilité',r.reliability_note)] %}
+          <span style="font-size:11px;padding:2px 8px;border-radius:5px;background:var(--bg-2);color:var(--txt-2);border:1px solid var(--bord)">{{lbl}} <span class="star">★</span>{{note}}</span>
+          {% endfor %}
         </div>
-        {% if r.comment %}
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-top:8px">"{{ r.comment }}"</p>
-        {% endif %}
+        {% if r.comment %}<p style="font-size:12.5px;color:var(--txt-2);line-height:1.6;font-style:italic">"{{r.comment}}"</p>{% endif %}
       </div>
       {% endfor %}
       {% endif %}
     </div>
 
-    <!-- PANNEAU RÉSERVATION DESKTOP -->
-    <div class="booking-card">
+    <!-- BOOKING PANEL DESKTOP -->
+    <div class="book-card">
       <div class="card">
-        <div style="font-size:28px;font-weight:800;letter-spacing:-.03em;margin-bottom:2px">{{ vehicle.price_per_day }} FCFA</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px">par jour TTC</div>
-        <div style="background:var(--bg-elevated);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:13px">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-            <span style="color:var(--text-secondary)">Immatriculation</span>
-            <strong>{{ vehicle.plate }}</strong>
-          </div>
-          <div style="display:flex;justify-content:space-between">
-            <span style="color:var(--text-secondary)">Statut</span>
-            <span class="badge {% if vehicle.status=='disponible' %}badge-green{% elif vehicle.status=='louee' %}badge-gold{% else %}badge-red{% endif %}">
-              {{ 'Disponible' if vehicle.status=='disponible' else 'En location' if vehicle.status=='louee' else 'Hors service' }}
+        <div style="font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:2px">{{vehicle.price_per_day}} FCFA</div>
+        <div style="font-size:13px;color:var(--txt-3);margin-bottom:18px">par jour TTC</div>
+        <div style="background:var(--bg-2);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:var(--txt-2)">Immatriculation</span><strong>{{vehicle.plate}}</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--txt-2)">Statut</span>
+            <span class="tag {{'tag-green' if vehicle.status=='disponible' else 'tag-amber' if vehicle.status=='louee' else 'tag-red'}}" style="font-size:11px">
+              {{'Disponible' if vehicle.status=='disponible' else 'En location' if vehicle.status=='louee' else 'Indisponible'}}
             </span>
           </div>
         </div>
         {% if session.user_id %}
-          {% if session.role == 'client' %}
-            {% if vehicle.status == 'disponible' %}
-              <a href="/reserver/{{ vehicle.id }}" class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:13px">Réserver →</a>
+          {% if session.role=='client' %}
+            {% if vehicle.status=='disponible' %}
+              <a href="/reserver/{{vehicle.id}}" class="btn btn-gold" style="width:100%;justify-content:center;font-size:15px;padding:13px">Réserver ce véhicule →</a>
             {% else %}
-              <button class="btn btn-outline" style="width:100%;justify-content:center;opacity:.6" disabled>Non disponible</button>
+              <button class="btn btn-ghost" style="width:100%;justify-content:center;opacity:.5" disabled>Non disponible</button>
             {% endif %}
           {% endif %}
         {% else %}
-          <a href="/connexion" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px">Se connecter pour réserver</a>
-          <a href="/inscription" class="btn btn-outline" style="width:100%;justify-content:center">Créer un compte</a>
+          <a href="/connexion" class="btn btn-gold" style="width:100%;justify-content:center;margin-bottom:10px">Se connecter pour réserver</a>
+          <a href="/inscription" class="btn btn-ghost" style="width:100%;justify-content:center">Créer un compte</a>
         {% endif %}
-        <div style="margin-top:14px;padding:10px 12px;background:var(--accent-dim);border-radius:8px;font-size:12px;color:var(--accent);line-height:1.6;border:1px solid rgba(16,185,129,.2)">
-          🔒 Documents approuvés requis pour réserver.
-        </div>
-        <div style="margin-top:12px;text-align:center">
-          <a href="tel:776729740" style="font-size:13px;color:var(--accent);font-weight:600">📞 77 672 97 40</a>
-        </div>
+        <div style="margin-top:14px;padding:10px 12px;background:var(--gold-dim);border-radius:8px;font-size:12px;color:var(--gold);line-height:1.55;border:1px solid var(--gold-bord)">🔒 Dossier documentaire approuvé requis.</div>
+        <div style="text-align:center;margin-top:12px"><a href="tel:776729740" style="font-size:13px;color:var(--gold);font-weight:600">📞 77 672 97 40</a></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- STICKY BOTTOM BAR (mobile uniquement) -->
-<div class="sticky-bar">
-  <div class="sticky-bar-inner">
-    <div class="sticky-price">
-      {{ vehicle.price_per_day }} FCFA
-      <small>par jour</small>
-    </div>
-    {% if session.user_id and session.role == 'client' and vehicle.status == 'disponible' %}
-      <a href="/reserver/{{ vehicle.id }}" class="btn btn-primary" style="flex:1;justify-content:center;font-size:15px;padding:13px">Réserver →</a>
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-cta">
+  <div class="sticky-inner">
+    <div class="sticky-price">{{vehicle.price_per_day}} FCFA<small>par jour</small></div>
+    {% if session.user_id and session.role=='client' and vehicle.status=='disponible' %}
+      <a href="/reserver/{{vehicle.id}}" class="btn btn-gold" style="flex:1;justify-content:center;font-size:15px;padding:13px">Réserver →</a>
     {% elif not session.user_id %}
-      <a href="/connexion" class="btn btn-primary" style="flex:1;justify-content:center;font-size:15px;padding:13px">Se connecter</a>
+      <a href="/connexion" class="btn btn-gold" style="flex:1;justify-content:center;font-size:15px;padding:13px">Se connecter</a>
     {% else %}
-      <button class="btn btn-outline" style="flex:1;justify-content:center;opacity:.6" disabled>Non disponible</button>
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;opacity:.5" disabled>Indisponible</button>
     {% endif %}
   </div>
 </div>

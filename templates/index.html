@@ -1,292 +1,133 @@
 {% extends 'base.html' %}
 {% block title %}Accueil{% endblock %}
-
 {% block extra_css %}
 <style>
-/* ── HERO ───────────────────────────────────────────── */
-.hero{
-  background: linear-gradient(135deg, #0f1a2e 0%, #111827 60%, #0d2218 100%);
-  color: var(--text-primary);
-  padding:100px 48px; display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden; border-bottom: 1px solid var(--border);
-}
-.hero::before{
-  content:''; position:absolute; right:-120px; top:-120px;
-  width:500px; height:500px; border-radius:50%;
-  background: radial-gradient(circle, rgba(16,185,129,.08) 0%, transparent 70%);
-  pointer-events:none;
-}
-.hero::after{
-  content:''; position:absolute; left:-60px; bottom:-80px;
-  width:300px; height:300px; border-radius:50%;
-  border:1px solid rgba(16,185,129,.06); pointer-events:none;
-}
-.hero-content{max-width:680px; position:relative; z-index:1; text-align:center; }
-.hero-label{
-  font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--accent); margin-bottom:20px;
-  opacity:.8;
-}
-.hero-title{
-  font-size:52px; font-weight:800;
-  letter-spacing:-.04em; line-height:1.05; margin-bottom:20px;
-  color: var(--text-primary);
-}
-.hero-title em{ color: var(--accent); font-style:italic }
-.hero-sub{ font-size:16px; color: var(--text-secondary); line-height:1.6; margin-bottom:36px }
-.hero-actions{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-.hero-btn{
-  padding:13px 28px; border-radius:11px; font-weight:700; font-size:14px;
-  font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all .18s;
-  display:inline-block;
-}
-.hero-btn-primary{
-  background: linear-gradient(135deg, var(--accent) 0%, #0d9668 100%);
-  color:#fff;
-  box-shadow: 0 0 0 1px rgba(16,185,129,.4), 0 4px 16px rgba(16,185,129,.22);
-}
-.hero-btn-primary:hover{
-  transform:translateY(-1px);
-  box-shadow: 0 0 0 1px rgba(16,185,129,.5), 0 6px 22px rgba(16,185,129,.3);
-}
-.hero-btn-outline{
-  background:transparent; color:var(--text-secondary);
-  border:1px solid var(--border-hover);
-}
-.hero-btn-outline:hover{ border-color:var(--accent); color:var(--text-primary); }
+.hero{background:linear-gradient(135deg,#0a0e18 0%,#0e1117 55%,#12180a 100%);padding:80px 20px 72px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--bord)}
+.hero::before{content:'';position:absolute;left:50%;top:-60px;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.07) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;opacity:.9}
+.hero-title{font-size:clamp(32px,7vw,56px);font-weight:800;letter-spacing:-.05em;line-height:1.05;margin-bottom:18px;color:var(--txt)}
+.hero-title em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:16px;color:var(--txt-2);max-width:500px;margin:0 auto 36px;line-height:1.7}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero-cta-p{padding:14px 32px;border-radius:11px;font-weight:800;font-size:15px;background:linear-gradient(135deg,var(--gold) 0%,var(--gold-h) 100%);color:#0e1117;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;box-shadow:var(--sh-gold);display:inline-block}
+.hero-cta-p:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(212,160,23,.5),0 6px 24px rgba(212,160,23,.3)}
+.hero-cta-s{padding:14px 28px;border-radius:11px;font-weight:700;font-size:15px;background:transparent;color:var(--txt-2);border:1px solid var(--bord-h);cursor:pointer;transition:all .18s;display:inline-block}
+.hero-cta-s:hover{background:var(--bg-2);color:var(--txt);border-color:var(--gold)}
 
+/* SECTION */
+.sec-lbl{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt-3);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--bord)}
 
-/* ── SECTION LABEL ──────────────────────────────────── */
-.section-label-outer{
-  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--text-muted); margin-bottom:16px;
-  display:flex; align-items:center; gap:10px;
-}
-.section-label-outer::after{ content:''; flex:1; height:1px; background:var(--border) }
+/* VEHICLE CARDS */
+.vgrid{display:grid;grid-template-columns:1fr;gap:13px}
+.vc{background:var(--card);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;transition:all .2s;display:flex;flex-direction:row}
+.vc:hover{border-color:var(--bord-h);box-shadow:0 4px 24px rgba(0,0,0,.4),0 0 0 1px rgba(212,160,23,.1)}
+.vc-img{width:108px;min-width:108px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;font-size:38px;border-right:1px solid var(--bord);flex-shrink:0;position:relative;overflow:hidden}
+.vc-img img{width:100%;height:100%;object-fit:cover}
+.vc-body{padding:13px 15px;flex:1;display:flex;flex-direction:column;min-width:0}
+.vc-cat{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);margin-bottom:4px}
+.vc-name{font-weight:700;font-size:15px;color:var(--txt);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vc-avail{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--txt-2);margin-bottom:8px}
+.dot-ok{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.dot-no{width:7px;height:7px;border-radius:50%;background:var(--txt-3);flex-shrink:0}
+.vc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.vc-tag{font-size:10px;padding:2px 7px;border-radius:5px;background:var(--bg-2);color:var(--txt-2);border:1px solid var(--bord)}
+.vc-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--bord)}
+.vc-price{font-size:16px;font-weight:800;letter-spacing:-.03em;color:var(--txt)}
+.vc-price span{font-size:11px;font-weight:400;color:var(--txt-3)}
 
-/* ── VEHICLE CARDS ──────────────────────────────────── */
-.vcard{
-  background: var(--bg-card);
-  border:1px solid var(--border); border-radius:14px;
-  overflow:hidden; transition:all .2s; display:flex; flex-direction:column;
-}
-.vcard:hover{
-  transform:translateY(-3px);
-  border-color: var(--border-hover);
-  box-shadow: 0 12px 40px rgba(0,0,0,.4);
-}
-.vcard-img{
-  height:180px; background: var(--bg-elevated);
-  display:flex; align-items:center; justify-content:center;
-  font-size:56px; border-bottom:1px solid var(--border);
-}
-.vcard-body{ padding:20px; flex:1; display:flex; flex-direction:column }
-.vcard-cat{
-  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;
-}
-.vcard-title{ font-size:17px; font-weight:700; margin-bottom:4px; color:var(--text-primary); }
-.vcard-rating{ font-size:12px; color:var(--text-secondary); display:flex; align-items:center; gap:4px; margin-bottom:12px }
-.vcard-specs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px }
-.spec-tag{
-  font-size:11px; padding:3px 8px; border-radius:6px;
-  background: var(--bg-elevated); color:var(--text-secondary); border:1px solid var(--border);
-}
-.vcard-footer{
-  margin-top:auto; display:flex; align-items:center; justify-content:space-between;
-  padding-top:14px; border-top:1px solid var(--border);
-}
-.vcard-price{ font-size:22px; font-weight:800; letter-spacing:-.03em; color:var(--text-primary); }
-.vcard-price span{ font-size:12px; font-weight:400; color:var(--text-muted) }
+/* HOW */
+.how-step{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--bord)}
+.how-step:last-child{border-bottom:none}
+.how-num{width:40px;height:40px;min-width:40px;border-radius:11px;background:var(--gold-dim);border:1px solid var(--gold-bord);color:var(--gold);font-family:'DM Mono',monospace;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.how-title{font-weight:700;font-size:15px;margin-bottom:3px;color:var(--txt)}
+.how-desc{font-size:13px;color:var(--txt-2);line-height:1.6}
 
-.vehicles-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+/* CTA BAND */
+.cta-band{background:linear-gradient(135deg,#1a1300 0%,#251c00 50%,#1a1300 100%);border:1px solid var(--gold-bord);border-radius:var(--r-lg);padding:40px 24px;text-align:center;margin:40px 0;position:relative;overflow:hidden}
+.cta-band::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.08) 0%,transparent 70%)}
 
-/* ── HOW IT WORKS ───────────────────────────────────── */
-.how-step{
-  display:flex; gap:20px; align-items:flex-start;
-  padding:24px 0; border-bottom:1px solid var(--border);
-}
-.how-step:last-child{ border-bottom:none }
-.how-num{
-  width:44px; height:44px; border-radius:12px;
-  background: var(--accent-dim); border:1px solid rgba(16,185,129,.25);
-  color:var(--accent); font-family:'DM Mono',monospace; font-size:15px; font-weight:500;
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-.how-title{ font-weight:700; font-size:16px; margin-bottom:4px; color:var(--text-primary); }
-.how-desc{ font-size:14px; color:var(--text-secondary); line-height:1.6 }
-
-.how-grid{ display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
-
-/* ── CTA BAND ───────────────────────────────────────── */
-.cta-band{
-  background: linear-gradient(135deg, #064e35 0%, #065f46 50%, #047857 100%);
-  border: 1px solid rgba(16,185,129,.3);
-  border-radius:16px; padding:48px; margin:48px 0;
-  display:flex; align-items:center; justify-content:space-between; gap:32px;
-  position:relative; overflow:hidden;
-}
-.cta-band::before{
-  content:''; position:absolute; right:-60px; top:-60px;
-  width:250px; height:250px; border-radius:50%;
-  background: rgba(255,255,255,.05); pointer-events:none;
-}
-.cta-title{ font-size:28px; font-weight:800; letter-spacing:-.03em; margin-bottom:8px; color:#fff; }
-.cta-sub{ font-size:15px; color:rgba(255,255,255,.65); line-height:1.5 }
-.cta-btn{
-  white-space:nowrap; padding:14px 32px; border-radius:10px;
-  background:var(--bg-card); color:#065f46; font-weight:800; font-size:14px;
-  font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all .18s;
-  flex-shrink:0; display:inline-block;
-  box-shadow: 0 4px 14px rgba(0,0,0,.2);
-}
-.cta-btn:hover{ transform:translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
-
-/* ── FEATURE ICONS ──────────────────────────────────── */
-.feature-icon{
-  width:40px; height:40px; border-radius:10px;
-  background: var(--accent-dim); border:1px solid rgba(16,185,129,.2);
-  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
-}
-
-/* ── RESPONSIVE ─────────────────────────────────────── */
-@media(max-width:900px){
-  .hero{ padding:72px 32px; }
-  .hero-title{ font-size:40px }
-  .vehicles-grid{ grid-template-columns:repeat(2,1fr) }
-  .how-grid{ grid-template-columns:1fr; gap:32px; }
-  .cta-band{ flex-direction:column; align-items:flex-start; padding:32px; gap:20px; }
-  .cta-btn{ width:100%; text-align:center }
-}
-@media(max-width:560px){
-  .hero{ padding:60px 20px; }
-  .hero-title{ font-size:32px }
-  .hero-sub{ font-size:14px; margin-bottom:24px }
-  .hero-actions{ flex-direction:column; gap:10px; align-items:center; }
-  .hero-btn{ width:100%; text-align:center; padding:14px 20px }
-  .vehicles-grid{ grid-template-columns:1fr }
-  .how-num{ width:36px; height:36px; font-size:13px; border-radius:9px }
-  .how-title{ font-size:14px }
-  .cta-band{ padding:24px 20px; border-radius:12px; margin:32px 0 }
-  .cta-title{ font-size:22px }
-  .cta-sub{ font-size:13px }
-  .container{ padding-left:20px; padding-right:20px }
-}
+@media(min-width:600px){.vgrid{grid-template-columns:1fr 1fr}.vc{flex-direction:column}.vc-img{width:100%;min-width:unset;height:155px;border-right:none;border-bottom:1px solid var(--bord)}}
+@media(min-width:900px){.vgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:599px){.hero-title{font-size:32px}.hero-sub{font-size:14px;margin-bottom:28px}.hero-ctas{flex-direction:column;align-items:center}}
 </style>
 {% endblock %}
-
 {% block content %}
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-content">
-    <div class="hero-label">Agence de location automobile</div>
-    <h1 class="hero-title">Louer un véhicule,<br><em>simplement.</em></h1>
-    <p class="hero-sub">Réservez en ligne, déposez vos documents une seule fois, et prenez la route. Notre flotte de véhicules soigneusement entretenus vous attend.</p>
-    <div class="hero-actions">
-      <a href="/catalogue" class="hero-btn hero-btn-primary">Voir le catalogue</a>
-      <a href="/inscription" class="hero-btn hero-btn-outline">Créer mon compte</a>
-    </div>
+  <div class="hero-eyebrow">Agence de location · Dakar, Sénégal</div>
+  <h1 class="hero-title">Louer un véhicule,<br><em>simplement.</em></h1>
+  <p class="hero-sub">Réservez en quelques minutes. Déposez vos documents une fois. Prenez la route l'esprit libre.</p>
+  <div class="hero-ctas">
+    <a href="/catalogue" class="hero-cta-p">Voir la flotte disponible</a>
+    <a href="/inscription" class="hero-cta-s">Créer mon compte</a>
   </div>
-
 </section>
 
-<div class="container">
-
-  <!-- VEHICLES -->
-  <section style="padding:56px 0 0">
-    <div class="section-label-outer">Sélection du moment</div>
-    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;flex-wrap:wrap;gap:8px">
-      <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--text-primary)">Nos véhicules populaires</h2>
-      <a href="/catalogue" style="font-size:13px;font-weight:600;color:var(--accent)">Voir tout →</a>
-    </div>
-    <div class="vehicles-grid">
-      {% for v in vehicles %}
-      <div class="vcard">
-        <div class="vcard-img">
-          {% if v.image %}
-            <img src="{{ v.image | img_url }}" alt="{{ v.brand }} {{ v.model }}" style="width:100%;height:100%;object-fit:cover;">
-          {% elif v.category == 'Citadine' %}🚗
-          {% elif v.category == 'SUV' %}🚙
-          {% elif v.category == 'Luxe' %}🏎️
-          {% elif v.category == 'Utilitaire' %}🚐
-          {% else %}🚘{% endif %}
+<div class="wrap" style="padding-top:48px;padding-bottom:48px">
+  {% if vehicles %}
+  <div class="sec-lbl" style="margin-bottom:20px">Flotte disponible</div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px;flex-wrap:wrap;gap:8px">
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-.04em">Véhicules populaires</h2>
+    <a href="/catalogue" style="font-size:13px;font-weight:600;color:var(--gold)">Voir tout →</a>
+  </div>
+  <div class="vgrid" style="margin-bottom:48px">
+    {% for v in vehicles %}
+    <div class="vc">
+      <div class="vc-img">
+        {% if v.image %}
+          {% if v.image.startswith('data:') or v.image.startswith('http') %}
+            <img src="{{v.image}}" alt="{{v.brand}} {{v.model}}">
+          {% else %}
+            <img src="/uploads/{{v.image}}" alt="{{v.brand}} {{v.model}}">
+          {% endif %}
+        {% else %}
+          {% if v.category=='SUV' %}🚙{% elif v.category=='Luxe' %}🏎️{% elif v.category=='Utilitaire' %}🚐{% else %}🚗{% endif %}
+        {% endif %}
+      </div>
+      <div class="vc-body">
+        <div class="vc-cat">{{v.category}}</div>
+        <div class="vc-name">{{v.brand}} {{v.model}}</div>
+        <div class="vc-avail">
+          <span class="{% if v.status=='disponible' %}dot-ok{% else %}dot-no{% endif %}"></span>
+          {{v.status|title}}
         </div>
-        <div class="vcard-body">
-          <div class="vcard-cat">{{ v.category }}</div>
-          <div class="vcard-title">{{ v.brand }} {{ v.model }}</div>
-          <div class="vcard-rating">
-            <span class="star">★</span>
-            {{ v.avg_note if v.avg_note else '—' }}
-            <span style="color:var(--text-muted)">({{ v.total_rentals }} locations)</span>
-          </div>
-          <div class="vcard-specs">
-            <span class="spec-tag">{{ v.fuel }}</span>
-            <span class="spec-tag">{{ v.transmission }}</span>
-            <span class="spec-tag">{{ v.seats }} places</span>
-            <span class="spec-tag">{{ v.year }}</span>
-          </div>
-          <div class="vcard-footer">
-            <div class="vcard-price">{{ v.price_per_day }} FCFA <span>/ jour</span></div>
-            <a href="/vehicule/{{ v.id }}" class="btn btn-primary btn-sm">Voir →</a>
-          </div>
+        <div class="vc-tags">
+          <span class="vc-tag">{{v.fuel}}</span>
+          <span class="vc-tag">{{v.transmission}}</span>
+          <span class="vc-tag">{{v.seats}}p</span>
+          <span class="vc-tag">{{v.year}}</span>
+        </div>
+        <div class="vc-foot">
+          <div class="vc-price">{{v.price_per_day}} FCFA <span>/ jour</span></div>
+          <a href="/vehicule/{{v.id}}" class="btn btn-gold btn-sm">Voir →</a>
         </div>
       </div>
-      {% endfor %}
     </div>
-  </section>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <!-- HOW IT WORKS -->
-  <section style="padding:64px 0">
-    <div class="section-label-outer">Comment ça marche</div>
-    <div class="how-grid">
-      <div>
-        <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:28px;color:var(--text-primary)">Réservez en 4 étapes</h2>
-        <div class="how-step">
-          <div class="how-num">01</div>
-          <div><div class="how-title">Créez votre compte</div><div class="how-desc">Inscription rapide en 2 minutes. Email, nom, prénom — c'est tout.</div></div>
-        </div>
-        <div class="how-step">
-          <div class="how-num">02</div>
-          <div><div class="how-title">Déposez vos documents</div><div class="how-desc">Permis de conduire, CNI et justificatif de domicile. Une seule fois, et c'est valable pour toutes vos futures locations.</div></div>
-        </div>
-        <div class="how-step">
-          <div class="how-num">03</div>
-          <div><div class="how-title">Choisissez votre véhicule</div><div class="how-desc">Parcourez notre catalogue et réservez le véhicule qui vous convient sur vos dates.</div></div>
-        </div>
-        <div class="how-step">
-          <div class="how-num">04</div>
-          <div><div class="how-title">Prenez la route</div><div class="how-desc">Récupérez votre véhicule à l'agence. La facture est générée automatiquement au retour.</div></div>
-        </div>
-      </div>
-      <div>
-        <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:28px;color:var(--text-primary)">Pourquoi nous choisir</h2>
-        {% set features = [
-          ('🔒', 'Vérification documentaire', 'Sécurité maximale pour vous et l\'agence. Chaque client est validé avant sa première location.'),
-          ('⚡', 'Réservation instantanée', 'Disponibilités en temps réel. Plus besoin d\'appeler pour savoir si un véhicule est libre.'),
-          ('📊', 'Suivi transparent', 'Votre espace client centralise toutes vos réservations, factures et statuts en un coup d\'œil.'),
-          ('⭐', 'Flotte entretenue', 'Chaque véhicule est contrôlé entre chaque location. Les avis clients guident nos standards.'),
-        ] %}
-        {% for icon, title, desc in features %}
-        <div style="display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)">
-          <div class="feature-icon">{{ icon }}</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;margin-bottom:3px;color:var(--text-primary)">{{ title }}</div>
-            <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">{{ desc }}</div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
+  <div class="sec-lbl" style="margin-bottom:20px">Processus</div>
+  <div style="display:grid;gap:0;margin-bottom:40px">
+    {% for num,title,desc in [
+      ('01','Créez votre compte','Inscription en 2 minutes. Email, prénom, nom — c\'est tout.'),
+      ('02','Déposez vos documents','Permis, CNI, justificatif. Une seule fois, valable pour toutes vos futures réservations.'),
+      ('03','Choisissez votre véhicule','Parcourez la flotte, filtrez par budget et disponibilité, réservez en ligne.'),
+      ('04','Prenez la route','Récupérez votre véhicule à l\'agence. Facture générée automatiquement au retour.'),
+    ] %}
+    <div class="how-step">
+      <div class="how-num">{{num}}</div>
+      <div><div class="how-title">{{title}}</div><div class="how-desc">{{desc}}</div></div>
     </div>
-  </section>
+    {% endfor %}
+  </div>
 
   <!-- CTA -->
   <div class="cta-band">
-    <div style="position:relative;z-index:1">
-      <div class="cta-title">Prêt à prendre la route ?</div>
-      <div class="cta-sub">Créez votre compte gratuitement et réservez votre premier véhicule en quelques minutes.</div>
-    </div>
-    <a href="/inscription" class="cta-btn" style="position:relative;z-index:1">Commencer maintenant →</a>
+    <div style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:8px;position:relative">Prêt à prendre la route ?</div>
+    <div style="font-size:14px;color:var(--txt-2);margin-bottom:24px;position:relative">Créez votre compte gratuitement et réservez en quelques minutes.</div>
+    <a href="/inscription" class="hero-cta-p" style="position:relative">Commencer maintenant →</a>
   </div>
-
 </div>
 {% endblock %}

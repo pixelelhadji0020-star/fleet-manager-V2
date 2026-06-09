@@ -2,17 +2,13 @@
 {% block title %}Clients{% endblock %}
 {% block extra_css %}
 <style>
-.admin-nav{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 12px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.admin-nav::-webkit-scrollbar{display:none}
-.admin-nav a{font-size:13px;font-weight:500;padding:13px 16px;color:var(--text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}
-.admin-nav a:hover{color:var(--text-primary)}
-.admin-nav a.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
 </style>
 {% endblock %}
 {% block content %}
-<div class="admin-nav">
+<div class="anav">
   <a href="/admin">📊 Dashboard</a>
-  <a href="/admin/clients" class="active">👥 Clients</a>
+  <a href="/admin/clients" class="on">👥 Clients</a>
   <a href="/admin/reservations">📅 Réservations</a>
   <a href="/admin/vehicules">🚗 Véhicules</a>
   <a href="/admin/statistiques">📈 Stats</a>
@@ -26,23 +22,23 @@
       {% endfor %}
     </div>
   </div>
-  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+  <div style="background:var(--card);border:1px solid var(--bord);border-radius:12px;overflow:hidden">
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
       <thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Documents</th><th>Inscrit le</th><th>Action</th></tr></thead>
       <tbody>
       {% for c in clients %}
       <tr>
         <td><strong>{{ c.first_name }} {{ c.last_name }}</strong></td>
-        <td style="color:var(--text-secondary)">{{ c.email }}</td>
-        <td style="color:var(--text-secondary)">{{ c.phone or '—' }}</td>
+        <td style="color:var(--txt-2)">{{ c.email }}</td>
+        <td style="color:var(--txt-2)">{{ c.phone or '—' }}</td>
         <td><span class="badge {% if c.doc_status=='approuve' %}badge-green{% elif c.doc_status=='en_attente' %}badge-gold{% elif c.doc_status=='rejete' %}badge-red{% else %}badge-gray{% endif %}">
           {{ {'aucun':'Non soumis','en_attente':'En attente','approuve':'Approuvé','rejete':'Refusé'}.get(c.doc_status,c.doc_status) }}
         </span></td>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-secondary)">{{ c.created_at[:10] }}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txt-2)">{{ c.created_at[:10] }}</td>
         <td><a href="/admin/client/{{ c.id }}" class="btn btn-outline btn-sm">Voir →</a></td>
       </tr>
       {% else %}
-      <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-secondary)">Aucun client trouvé</td></tr>
+      <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--txt-2)">Aucun client trouvé</td></tr>
       {% endfor %}
       </tbody>
     </table></div>
