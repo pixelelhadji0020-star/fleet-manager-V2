@@ -31,8 +31,14 @@
 </div>
 <div class="wrap" style="padding-top:24px;padding-bottom:80px">
   <div style="margin-bottom:20px">
-    <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:3px">Tableau de bord</h1>
-    <p style="font-size:13px;color:var(--txt-3)">Vue opérationnelle en temps réel</p>
+    <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:3px">Bonjour, {{session.get('name','Admin')}} 👋</h1>
+    <p style="font-size:13px;color:var(--txt-3)">
+      {% if stats.reservations_pending > 0 or stats.docs_pending > 0 %}
+        {{stats.reservations_pending}} demande{{'s' if stats.reservations_pending!=1 else ''}} · {{stats.docs_pending}} dossier{{'s' if stats.docs_pending!=1 else ''}} en attente de traitement
+      {% else %}
+        Tout est à jour — aucune action requise pour le moment
+      {% endif %}
+    </p>
   </div>
 
   <!-- ALERTE SI ACTIONS REQUISES -->

@@ -4,6 +4,7 @@
 <style>
 .anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
 .doc-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+@media(min-width:900px){.dtl-wrap{grid-template-columns:1fr 360px !important}}
 </style>
 {% endblock %}
 {% block content %}
@@ -14,10 +15,10 @@
   <a href="/admin/vehicules">🚗 Véhicules</a>
   <a href="/admin/statistiques">📈 Stats</a>
 </div>
-<div class="container" style="padding-top:32px;padding-bottom:60px">
+<div class="wrap" style="padding-top:32px;padding-bottom:60px">
   <a href="/admin/clients" style="font-size:13px;color:var(--txt-2);display:inline-flex;align-items:center;gap:6px;margin-bottom:24px">← Tous les clients</a>
 
-  <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start">
+  <div style="display:grid;grid-template-columns:1fr;gap:24px;align-items:start" class="dtl-wrap">
     <div>
       <!-- INFO -->
       <div class="card" style="margin-bottom:20px">
@@ -35,7 +36,7 @@
             </span>
           </div>
         </div>
-        <div class="grid-2">
+        <div class="g2f" style="margin-top:4px">
           {% for label, val in [('Téléphone', client.phone or '—'),('Inscrit le', client.created_at[:10]),('Soumis le', client.doc_submitted_at[:10] if client.doc_submitted_at else '—'),('Validé par', client.doc_validator or '—')] %}
           <div>
             <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-3);margin-bottom:4px">{{ label }}</div>
@@ -66,7 +67,7 @@
           </div>
         </div>
         {% if client[field] %}
-        <a href="/uploads/{{ client[field] }}" target="_blank" class="btn btn-outline btn-sm">Voir le fichier ↗</a>
+        <a href="/uploads/{{ client[field] }}" target="_blank" class="btn btn-ghost btn-sm">Voir le fichier ↗</a>
         {% else %}
         <span class="badge badge-gray">Manquant</span>
         {% endif %}
@@ -79,12 +80,12 @@
         <h3 style="font-weight:700;font-size:16px;margin-bottom:16px">Décision de validation</h3>
         <form method="post" action="/admin/valider-documents/{{ client.id }}" id="approve-form">
           <input type="hidden" name="action" value="approve">
-          <button type="submit" class="btn btn-success" style="margin-right:10px;font-size:14px;padding:11px 24px">✓ Approuver les documents</button>
+          <button type="submit" class="btn btn-ok" style="margin-right:10px;font-size:14px;padding:11px 24px">✓ Approuver les documents</button>
         </form>
         <form method="post" action="/admin/valider-documents/{{ client.id }}" id="reject-form" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bord)">
           <input type="hidden" name="action" value="reject">
-          <div class="form-group"><label class="form-label">Motif du refus</label>
-            <input class="form-input" type="text" name="reason" placeholder="Ex: Permis expiré, document illisible..." required></div>
+          <div class="fg"><label class="flb">Motif du refus</label>
+            <input class="fi" type="text" name="reason" placeholder="Ex: Permis expiré, document illisible..." required></div>
           <button type="submit" class="btn btn-danger" style="font-size:14px;padding:11px 24px">✕ Refuser les documents</button>
         </form>
       </div>

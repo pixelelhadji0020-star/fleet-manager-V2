@@ -2,58 +2,18 @@
 {% block title %}Véhicules{% endblock %}
 {% block extra_css %}
 <style>
-/* ── ADMIN NAV ──────────────────────────────────────── */
-.anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}/* Chrome/Safari */
-.admin-nav a{
-  font-size:12.5px;font-weight:500;padding:12px 16px;
-  color:var(--txt-2);border-bottom:2px solid transparent;
-  white-space:nowrap;transition:all .15s;
+.anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+.vcard{background:var(--card);border:1px solid var(--bord);border-radius:var(--r);padding:15px;margin-bottom:10px;transition:border-color .15s}
+.vcard:hover{border-color:var(--bord-h)}
+.vcard-img{width:72px;height:72px;min-width:72px;border-radius:10px;background:var(--bg-2);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--bord);flex-shrink:0}
+.vcard-img img{width:100%;height:100%;object-fit:cover}
+@media(min-width:600px){
+  .vcards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .vcards-grid .vcard{margin-bottom:0}
 }
-.admin-nav a:hover{color:var(--txt)}
-.admin-nav a.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
-
-/* ── TABLE WRAPPER — défilement horizontal sur mobile ── */
-.table-scroll{
-  background:var(--card);border:1px solid var(--bord);border-radius:12px;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-}
-/* La table elle-même ne se rétrécit plus sous sa taille naturelle */
-.table-scroll table{
-  min-width:720px; /* assure que toutes les colonnes restent lisibles */
-  width:100%;
-}
-
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE — TABLETTE  (≤ 900 px)
-   ═══════════════════════════════════════════════════════ */
-@media(max-width:900px){
-  .anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}.page-header{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:12px;
-  }
-  .page-header .btn{width:100%;text-align:center}
-}
-
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE  (≤ 560 px)
-   ═══════════════════════════════════════════════════════ */
-@media(max-width:560px){
-  .anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}.container{padding-left:16px;padding-right:16px}
-
-  h1{font-size:20px !important}
-
-  /* Petite astuce UX : une légère ombre à droite indique
-     qu'on peut faire défiler le tableau */
-  .table-scroll{
-    border-radius:10px;
-    box-shadow:inset -8px 0 12px -8px rgba(0,0,0,.08);
-  }
-}
+@media(min-width:900px){.vcards-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="anav">
   <a href="/admin">📊 Dashboard</a>
@@ -62,54 +22,54 @@
   <a href="/admin/vehicules" class="on">🚗 Véhicules</a>
   <a href="/admin/statistiques">📈 Stats</a>
 </div>
-
-<div class="container" style="padding-top:32px;padding-bottom:60px">
-  <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-    <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em">
-      Flotte — {{ vehicles|length }} véhicules
-    </h1>
-    <a href="/admin/vehicule/ajouter" class="btn btn-primary">+ Ajouter un véhicule</a>
+<div class="wrap" style="padding-top:28px;padding-bottom:60px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:3px">Flotte</h1>
+      <p style="font-size:13px;color:var(--txt-3)">{{vehicles|length}} véhicule{{'s' if vehicles|length!=1 else ''}}</p>
+    </div>
+    <a href="/admin/vehicule/ajouter" class="btn btn-gold">+ Ajouter un véhicule</a>
   </div>
 
-  <!-- Wrapper scrollable horizontalement sur mobile -->
-  <div class="table-scroll">
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
-      <thead>
-        <tr>
-          <th>Véhicule</th>
-          <th>Plaque</th>
-          <th>Catégorie</th>
-          <th>Prix/j</th>
-          <th>Statut</th>
-          <th>Locations</th>
-          <th>CA</th>
-          <th>Note</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for v in vehicles %}
-      <tr>
-        <td>
-          <strong>{{ v.brand }} {{ v.model }}</strong><br>
-          <span style="font-size:11px;color:var(--txt-2)">{{ v.year }} · {{ v.fuel }}</span>
-        </td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px">{{ v.plate }}</td>
-        <td>{{ v.category }}</td>
-        <td style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700">{{ v.price_per_day }} FCFA</td>
-        <td>
-          <span class="badge {% if v.status=='disponible' %}badge-green{% elif v.status=='louee' %}badge-gold{% else %}badge-red{% endif %}">
-            {{ {'disponible':'Disponible','louee':'En location','hors_service':'Hors service'}.get(v.status,v.status) }}
+  {% if vehicles %}
+  <div class="vcards-grid">
+  {% for v in vehicles %}
+  <div class="vcard">
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:10px">
+      <div class="vcard-img">
+        {% if v.image %}
+          <img src="{{v.image | img_url}}" alt="{{v.brand}} {{v.model}}">
+        {% else %}
+          {% if v.category=='SUV' %}🚙{% elif v.category=='Luxe' %}🏎️{% elif v.category=='Utilitaire' %}🚐{% else %}🚗{% endif %}
+        {% endif %}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+          <div>
+            <div style="font-weight:700;font-size:14px">{{v.brand}} {{v.model}}</div>
+            <div style="font-size:11.5px;color:var(--txt-3);margin-top:1px">{{v.year}} · {{v.fuel}} · {{v.category}}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txt-3);margin-top:1px">{{v.plate}}</div>
+          </div>
+          <span class="tag {% if v.status=='disponible' %}tag-green{% elif v.status=='louee' %}tag-amber{% else %}tag-red{% endif %}" style="flex-shrink:0;font-size:10.5px">
+            {{'Disponible' if v.status=='disponible' else 'En location' if v.status=='louee' else 'Hors service'}}
           </span>
-        </td>
-        <td style="text-align:center">{{ v.total_rentals or 0 }}</td>
-        <td style="font-weight:600">{{ v.revenue or 0 }} FCFA</td>
-        <td>{% if v.avg_note %}<span class="star">★</span> {{ v.avg_note }}{% else %}—{% endif %}</td>
-        <td><a href="/admin/vehicule/{{ v.id }}/modifier" class="btn btn-outline btn-sm">Modifier</a></td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:9px;border-top:1px solid var(--bord)">
+      <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">{{v.price_per_day}} <span style="font-size:11px;font-weight:400;color:var(--txt-3)">FCFA / jour</span></div>
+      <a href="/admin/vehicule/{{v.id}}/modifier" class="btn btn-ghost btn-sm">Modifier →</a>
+    </div>
   </div>
+  {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:48px 16px;background:var(--card);border:1px solid var(--bord);border-radius:var(--r)">
+    <div style="font-size:36px;margin-bottom:12px">🚗</div>
+    <div style="font-weight:700;font-size:15px;margin-bottom:5px">Aucun véhicule</div>
+    <div style="font-size:13px;color:var(--txt-2);margin-bottom:16px">Commencez par ajouter un véhicule à votre flotte.</div>
+    <a href="/admin/vehicule/ajouter" class="btn btn-gold">+ Ajouter un véhicule</a>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

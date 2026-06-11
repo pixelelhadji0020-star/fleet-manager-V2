@@ -3,6 +3,10 @@
 {% block extra_css %}
 <style>
 .anav{background:var(--card);border-bottom:1px solid var(--bord);padding:0 14px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.anav::-webkit-scrollbar{display:none}.anav a{font-size:13px;font-weight:500;padding:13px 15px;color:var(--txt-3);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}.anav a:hover{color:var(--txt)}.anav a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+.ccard{background:var(--card);border:1px solid var(--bord);border-radius:var(--r);padding:15px;margin-bottom:10px;transition:border-color .15s}
+.ccard:hover{border-color:var(--bord-h)}
+.ccard-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.ccard-ft{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:9px;border-top:1px solid var(--bord)}
 </style>
 {% endblock %}
 {% block content %}
@@ -13,35 +17,44 @@
   <a href="/admin/vehicules">🚗 Véhicules</a>
   <a href="/admin/statistiques">📈 Stats</a>
 </div>
-<div class="container" style="padding-top:32px;padding-bottom:60px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-    <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em">Gestion des clients</h1>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      {% for val, label in [('','Tous'),('en_attente','En attente'),('approuve','Approuvés'),('rejete','Refusés'),('aucun','Sans docs')] %}
-      <a href="/admin/clients{% if val %}?status={{ val }}{% endif %}" class="btn {% if status_filter==val %}btn-primary{% else %}btn-outline{% endif %} btn-sm">{{ label }}</a>
+<div class="wrap" style="padding-top:28px;padding-bottom:60px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:3px">Clients</h1>
+      <p style="font-size:13px;color:var(--txt-3)">{{clients|length}} client{{'s' if clients|length!=1 else ''}} trouvé{{'s' if clients|length!=1 else ''}}</p>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      {% for val,lbl in [('','Tous'),('en_attente','En attente'),('approuve','Approuvés'),('rejete','Refusés'),('aucun','Sans docs')] %}
+      <a href="/admin/clients{% if val %}?status={{val}}{% endif %}" class="btn {{'btn-gold' if status_filter==val else 'btn-ghost'}} btn-sm">{{lbl}}</a>
       {% endfor %}
     </div>
   </div>
-  <div style="background:var(--card);border:1px solid var(--bord);border-radius:12px;overflow:hidden">
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="min-width:600px">
-      <thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Documents</th><th>Inscrit le</th><th>Action</th></tr></thead>
-      <tbody>
-      {% for c in clients %}
-      <tr>
-        <td><strong>{{ c.first_name }} {{ c.last_name }}</strong></td>
-        <td style="color:var(--txt-2)">{{ c.email }}</td>
-        <td style="color:var(--txt-2)">{{ c.phone or '—' }}</td>
-        <td><span class="badge {% if c.doc_status=='approuve' %}badge-green{% elif c.doc_status=='en_attente' %}badge-gold{% elif c.doc_status=='rejete' %}badge-red{% else %}badge-gray{% endif %}">
-          {{ {'aucun':'Non soumis','en_attente':'En attente','approuve':'Approuvé','rejete':'Refusé'}.get(c.doc_status,c.doc_status) }}
-        </span></td>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txt-2)">{{ c.created_at[:10] }}</td>
-        <td><a href="/admin/client/{{ c.id }}" class="btn btn-outline btn-sm">Voir →</a></td>
-      </tr>
-      {% else %}
-      <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--txt-2)">Aucun client trouvé</td></tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
+
+  {% if clients %}
+  {% for c in clients %}
+  <div class="ccard">
+    <div class="ccard-hd">
+      <div style="min-width:0">
+        <div style="font-weight:700;font-size:14.5px">{{c.first_name}} {{c.last_name}}</div>
+        <div style="font-size:12px;color:var(--txt-2);margin-top:1px">{{c.email}}</div>
+        {% if c.phone %}<div style="font-size:12px;color:var(--txt-3);margin-top:1px">📞 {{c.phone}}</div>{% endif %}
+      </div>
+      <span class="tag {% if c.doc_status=='approuve' %}tag-green{% elif c.doc_status=='en_attente' %}tag-amber{% elif c.doc_status=='rejete' %}tag-red{% else %}tag-gray{% endif %}" style="flex-shrink:0;font-size:11px">
+        {{'Approuvé' if c.doc_status=='approuve' else 'En attente' if c.doc_status=='en_attente' else 'Refusé' if c.doc_status=='rejete' else 'Non soumis'}}
+      </span>
+    </div>
+    <div class="ccard-ft">
+      <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--txt-3)">Inscrit le {{c.created_at[:10]}}</div>
+      <a href="/admin/client/{{c.id}}" class="btn btn-ghost btn-sm">Voir →</a>
+    </div>
   </div>
+  {% endfor %}
+  {% else %}
+  <div style="text-align:center;padding:48px 16px;background:var(--card);border:1px solid var(--bord);border-radius:var(--r)">
+    <div style="font-size:36px;margin-bottom:12px">👥</div>
+    <div style="font-weight:700;font-size:15px;margin-bottom:5px">Aucun client trouvé</div>
+    <div style="font-size:13px;color:var(--txt-2)">Modifiez le filtre ou attendez les nouvelles inscriptions.</div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

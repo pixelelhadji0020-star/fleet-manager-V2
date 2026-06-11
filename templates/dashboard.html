@@ -69,6 +69,7 @@
         {% if r.notes %}<div style="font-size:12px;color:var(--txt-3);margin-top:2px">📝 {{r.notes}}</div>{% endif %}
       </div>
       <span class="tag {% if r.status=='confirmee' %}tag-green{% elif r.status=='en_attente' %}tag-amber{% elif r.status=='terminee' %}tag-blue{% elif r.status in ['annulee','refusee'] %}tag-red{% else %}tag-gray{% endif %}" style="flex-shrink:0;font-size:11px">
+        {% if r.status=='en_attente' %}<span class="pulse-dot"></span>{% endif %}
         {{'En attente' if r.status=='en_attente' else 'Confirmée' if r.status=='confirmee' else 'Terminée' if r.status=='terminee' else 'Annulée' if r.status=='annulee' else 'Refusée'}}
       </span>
     </div>

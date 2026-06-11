@@ -16,25 +16,9 @@ app.secret_key = os.environ.get('SECRET_KEY', 'fleet-secret-2025')
 
 @app.template_filter('img_url')
 def img_url_filter(image):
-    """Retourne l'image comme src HTML.
-    - data:image/...;base64,...  → retournée telle quelle
-    - http/https URL             → retournée telle quelle
-    - None/vide                  → chaîne vide (pas d'image cassée)
-    """
     if not image:
         return ''
     if image.startswith('data:') or image.startswith('http'):
-        return image
-    return ''
-def img_url_filter(image):
-    """Normalise une valeur image en URL affichable.
-    - URL complète (http/https) → retournée telle quelle
-    - Nom de fichier local → '/uploads/fichier.jpg'  
-    - None/vide → chaîne vide
-    """
-    if not image:
-        return ''
-    if image.startswith('http'):
         return image
     return f'/uploads/{image}'
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
@@ -70,8 +54,11 @@ def admin_required(f):
 def get_user():
     if 'user_id' not in session:
         return None
-    r = sb().table('users').select('*').eq('id', session['user_id']).single().execute()
-    return r.data
+    try:
+        r = sb().table('users').select('*').eq('id', session['user_id']).single().execute()
+        return r.data
+    except Exception:
+        return None
 
 def get_notifs():
     if 'user_id' not in session:
@@ -202,40 +189,48 @@ def vehicle_detail(vid):
 @app.route('/inscription', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        email = request.form['email'].strip().lower()
-        existing = sb().table('users').select('id').eq('email', email).execute()
-        if existing.data:
-            flash('Cet e-mail est déjà utilisé.', 'error')
-            return render_template('register.html')
-        r = sb().table('users').insert({
-            'email': email,
-            'password_hash': generate_password_hash(request.form['password']),
-            'first_name': request.form['first_name'].strip(),
-            'last_name': request.form['last_name'].strip(),
-            'phone': request.form.get('phone','').strip(),
-            'role': 'client',
-            'doc_status': 'aucun'
-        }).execute()
-        user = r.data[0]
-        session.update({'user_id': user['id'], 'role': 'client', 'name': user['first_name']})
-        add_notif(user['id'], 'Bienvenue !',
-            'Compte créé. Déposez vos documents pour activer les réservations.')
-        flash('Compte créé ! Déposez vos documents pour réserver.', 'success')
-        return redirect(url_for('dashboard'))
+        try:
+            email = request.form['email'].strip().lower()
+            existing = sb().table('users').select('id').eq('email', email).execute()
+            if existing.data:
+                flash('Cet e-mail est déjà utilisé.', 'error')
+                return render_template('register.html')
+            r = sb().table('users').insert({
+                'email': email,
+                'password_hash': generate_password_hash(request.form['password']),
+                'first_name': request.form['first_name'].strip(),
+                'last_name': request.form['last_name'].strip(),
+                'phone': request.form.get('phone','').strip(),
+                'role': 'client',
+                'doc_status': 'aucun'
+            }).execute()
+            user = r.data[0]
+            session.update({'user_id': user['id'], 'role': 'client', 'name': user['first_name']})
+            add_notif(user['id'], 'Bienvenue !',
+                'Compte créé. Déposez vos documents pour activer les réservations.')
+            flash('Compte créé ! Déposez vos documents pour réserver.', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            app.logger.error(f"register error: {e}")
+            flash('Service temporairement indisponible. Réessayez dans quelques instants.', 'error')
     return render_template('register.html')
 
 @app.route('/connexion', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email'].strip().lower()
-        r = sb().table('users').select('*').eq('email', email).execute()
-        users = r.data or []
-        if not users or not check_password_hash(users[0]['password_hash'], request.form['password']):
-            flash('Email ou mot de passe incorrect.', 'error')
-            return render_template('login.html')
-        u = users[0]
-        session.update({'user_id': u['id'], 'role': u['role'], 'name': u['first_name']})
-        return redirect(url_for('admin_dashboard') if u['role'] == 'admin' else url_for('dashboard'))
+        try:
+            email = request.form['email'].strip().lower()
+            r = sb().table('users').select('*').eq('email', email).execute()
+            users = r.data or []
+            if not users or not check_password_hash(users[0]['password_hash'], request.form['password']):
+                flash('Email ou mot de passe incorrect.', 'error')
+                return render_template('login.html')
+            u = users[0]
+            session.update({'user_id': u['id'], 'role': u['role'], 'name': u['first_name']})
+            return redirect(url_for('admin_dashboard') if u['role'] == 'admin' else url_for('dashboard'))
+        except Exception as e:
+            app.logger.error(f"login error: {e}")
+            flash('Service temporairement indisponible. Réessayez dans quelques instants.', 'error')
     return render_template('login.html')
 
 @app.route('/deconnexion')

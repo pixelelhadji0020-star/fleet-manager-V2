@@ -2,15 +2,15 @@
 {% block title %}Accueil{% endblock %}
 {% block extra_css %}
 <style>
-.hero{background:linear-gradient(135deg,#0a0e18 0%,#0e1117 55%,#12180a 100%);padding:80px 20px 72px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--bord)}
-.hero::before{content:'';position:absolute;left:50%;top:-60px;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.07) 0%,transparent 70%);pointer-events:none}
+.hero{background:linear-gradient(135deg,#0a0e18 0%,#111827 55%,#0a1810 100%);padding:80px 20px 72px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--bord)}
+.hero::before{content:'';position:absolute;left:50%;top:-60px;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.07) 0%,transparent 70%);pointer-events:none}
 .hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;opacity:.9}
 .hero-title{font-size:clamp(32px,7vw,56px);font-weight:800;letter-spacing:-.05em;line-height:1.05;margin-bottom:18px;color:var(--txt)}
 .hero-title em{color:var(--gold);font-style:normal}
 .hero-sub{font-size:16px;color:var(--txt-2);max-width:500px;margin:0 auto 36px;line-height:1.7}
 .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .hero-cta-p{padding:14px 32px;border-radius:11px;font-weight:800;font-size:15px;background:linear-gradient(135deg,var(--gold) 0%,var(--gold-h) 100%);color:#0e1117;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;box-shadow:var(--sh-gold);display:inline-block}
-.hero-cta-p:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(212,160,23,.5),0 6px 24px rgba(212,160,23,.3)}
+.hero-cta-p:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(16,185,129,.5),0 6px 24px rgba(16,185,129,.3)}
 .hero-cta-s{padding:14px 28px;border-radius:11px;font-weight:700;font-size:15px;background:transparent;color:var(--txt-2);border:1px solid var(--bord-h);cursor:pointer;transition:all .18s;display:inline-block}
 .hero-cta-s:hover{background:var(--bg-2);color:var(--txt);border-color:var(--gold)}
 
@@ -21,7 +21,7 @@
 /* VEHICLE CARDS */
 .vgrid{display:grid;grid-template-columns:1fr;gap:13px}
 .vc{background:var(--card);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;transition:all .2s;display:flex;flex-direction:row}
-.vc:hover{border-color:var(--bord-h);box-shadow:0 4px 24px rgba(0,0,0,.4),0 0 0 1px rgba(212,160,23,.1)}
+.vc:hover{border-color:var(--bord-h);box-shadow:0 4px 24px rgba(0,0,0,.4),0 0 0 1px rgba(16,185,129,.1)}
 .vc-img{width:108px;min-width:108px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;font-size:38px;border-right:1px solid var(--bord);flex-shrink:0;position:relative;overflow:hidden}
 .vc-img img{width:100%;height:100%;object-fit:cover}
 .vc-body{padding:13px 15px;flex:1;display:flex;flex-direction:column;min-width:0}
@@ -44,8 +44,8 @@
 .how-desc{font-size:13px;color:var(--txt-2);line-height:1.6}
 
 /* CTA BAND */
-.cta-band{background:linear-gradient(135deg,#1a1300 0%,#251c00 50%,#1a1300 100%);border:1px solid var(--gold-bord);border-radius:var(--r-lg);padding:40px 24px;text-align:center;margin:40px 0;position:relative;overflow:hidden}
-.cta-band::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.08) 0%,transparent 70%)}
+.cta-band{background:linear-gradient(135deg,#091810 0%,#0f2419 50%,#091810 100%);border:1px solid var(--gold-bord);border-radius:var(--r-lg);padding:40px 24px;text-align:center;margin:40px 0;position:relative;overflow:hidden}
+.cta-band::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.08) 0%,transparent 70%)}
 
 @media(min-width:600px){.vgrid{grid-template-columns:1fr 1fr}.vc{flex-direction:column}.vc-img{width:100%;min-width:unset;height:155px;border-right:none;border-bottom:1px solid var(--bord)}}
 @media(min-width:900px){.vgrid{grid-template-columns:repeat(3,1fr)}}

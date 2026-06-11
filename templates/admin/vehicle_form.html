@@ -9,13 +9,9 @@
   cursor:pointer;transition:all .2s;background:var(--bg-2);
   font-size:13px;color:var(--txt-3);gap:8px;position:relative;overflow:hidden;
 }
-.img-preview:hover{border-color:var(--gold);background:var(--accent-light,#dde6f5)}
-.img-preview img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:8px;}
-.img-overlay{
-  position:absolute;inset:0;background:rgba(0,0,0,.45);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .2s;color:#fff;gap:6px;border-radius:8px;pointer-events:none;
-}
+.img-preview:hover{border-color:var(--gold);background:var(--bg-3)}
+.img-preview img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:8px}
+.img-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;gap:6px;border-radius:8px;pointer-events:none}
 .img-preview:hover .img-overlay{opacity:1}
 #image-input{display:none}
 </style>
@@ -28,18 +24,22 @@
   <a href="/admin/vehicules" class="on">🚗 Véhicules</a>
   <a href="/admin/statistiques">📈 Stats</a>
 </div>
-<div class="container" style="max-width:720px;padding-top:32px;padding-bottom:60px">
+<div class="wrap" style="max-width:720px;padding-top:32px;padding-bottom:60px">
   <a href="/admin/vehicules" style="font-size:13px;color:var(--txt-2);display:inline-flex;align-items:center;gap:6px;margin-bottom:24px">← Tous les véhicules</a>
-  <h1 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:24px">
+  <h1 style="font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:24px">
     {{ 'Modifier le véhicule' if vehicle else 'Ajouter un véhicule' }}
   </h1>
   <form method="post" enctype="multipart/form-data" class="card">
 
     <!-- IMAGE -->
-    <div class="form-group">
-      <label class="form-label">Photo du véhicule <span style="color:var(--txt-3)">(JPG, PNG — optionnel)</span></label>
+    <div class="fg">
+      <label class="flb">Photo du véhicule <span style="color:var(--txt-3);font-weight:400">(JPG, PNG — optionnel)</span></label>
       <div class="img-preview" onclick="document.getElementById('image-input').click()" id="preview-box">
-        <img id="preview-img" {% if not (vehicle and vehicle.image) %}style="display:none"{% else %}src="{{ vehicle.image | img_url }}"{% endif %} alt="Photo">
+        {% if vehicle and vehicle.image %}
+        <img id="preview-img" src="{{ vehicle.image | img_url }}" alt="Photo">
+        {% else %}
+        <img id="preview-img" style="display:none" alt="Photo">
+        {% endif %}
         <div class="img-overlay">
           <span style="font-size:22px">📷</span>
           <span style="font-size:13px;font-weight:600">Changer la photo</span>
@@ -55,59 +55,59 @@
 
     <hr style="border:none;border-top:1px solid var(--bord);margin:4px 0 20px">
 
-    <div class="grid-2">
-      <div class="form-group"><label class="form-label">Marque</label>
-        <input class="form-input" type="text" name="brand" value="{{ vehicle.brand if vehicle else '' }}" required placeholder="Renault"></div>
-      <div class="form-group"><label class="form-label">Modèle</label>
-        <input class="form-input" type="text" name="model" value="{{ vehicle.model if vehicle else '' }}" required placeholder="Clio 5"></div>
+    <div class="g2f" style="margin-bottom:0">
+      <div class="fg"><label class="flb">Marque</label>
+        <input class="fi" type="text" name="brand" value="{{ vehicle.brand if vehicle else '' }}" required placeholder="Renault"></div>
+      <div class="fg"><label class="flb">Modèle</label>
+        <input class="fi" type="text" name="model" value="{{ vehicle.model if vehicle else '' }}" required placeholder="Clio 5"></div>
     </div>
-    <div class="grid-2">
-      <div class="form-group"><label class="form-label">Immatriculation</label>
-        <input class="form-input" type="text" name="plate" value="{{ vehicle.plate if vehicle else '' }}" required placeholder="AB-123-CD"></div>
-      <div class="form-group"><label class="form-label">Catégorie</label>
-        <select class="form-select" name="category">
+    <div class="g2f" style="margin-bottom:0">
+      <div class="fg"><label class="flb">Immatriculation</label>
+        <input class="fi" type="text" name="plate" value="{{ vehicle.plate if vehicle else '' }}" required placeholder="AB-123-CD"></div>
+      <div class="fg"><label class="flb">Catégorie</label>
+        <select class="fs" name="category">
           {% for cat in ['Citadine','Berline','SUV','Luxe','Utilitaire','Cabriolet'] %}
           <option value="{{ cat }}" {% if vehicle and vehicle.category==cat %}selected{% endif %}>{{ cat }}</option>
           {% endfor %}
         </select></div>
     </div>
-    <div class="grid-4">
-      <div class="form-group"><label class="form-label">Année</label>
-        <input class="form-input" type="number" name="year" value="{{ vehicle.year if vehicle else 2023 }}" min="2000" max="2030" required></div>
-      <div class="form-group"><label class="form-label">Couleur</label>
-        <input class="form-input" type="text" name="color" value="{{ vehicle.color if vehicle else '' }}" placeholder="Rouge"></div>
-      <div class="form-group"><label class="form-label">Places</label>
-        <input class="form-input" type="number" name="seats" value="{{ vehicle.seats if vehicle else 5 }}" min="1" max="9"></div>
-      <div class="form-group"><label class="form-label">Kilométrage</label>
-        <input class="form-input" type="number" name="mileage" value="{{ vehicle.mileage if vehicle else 0 }}" min="0"></div>
+    <div class="g4f" style="margin-bottom:0">
+      <div class="fg"><label class="flb">Année</label>
+        <input class="fi" type="number" name="year" value="{{ vehicle.year if vehicle else 2023 }}" min="2000" max="2030" required></div>
+      <div class="fg"><label class="flb">Couleur</label>
+        <input class="fi" type="text" name="color" value="{{ vehicle.color if vehicle else '' }}" placeholder="Rouge"></div>
+      <div class="fg"><label class="flb">Places</label>
+        <input class="fi" type="number" name="seats" value="{{ vehicle.seats if vehicle else 5 }}" min="1" max="9"></div>
+      <div class="fg"><label class="flb">Kilométrage</label>
+        <input class="fi" type="number" name="mileage" value="{{ vehicle.mileage if vehicle else 0 }}" min="0"></div>
     </div>
-    <div class="grid-2">
-      <div class="form-group"><label class="form-label">Carburant</label>
-        <select class="form-select" name="fuel">
+    <div class="g2f" style="margin-bottom:0">
+      <div class="fg"><label class="flb">Carburant</label>
+        <select class="fs" name="fuel">
           {% for f in ['Essence','Diesel','Hybride','Électrique','GPL'] %}
           <option value="{{ f }}" {% if vehicle and vehicle.fuel==f %}selected{% endif %}>{{ f }}</option>
           {% endfor %}
         </select></div>
-      <div class="form-group"><label class="form-label">Transmission</label>
-        <select class="form-select" name="transmission">
+      <div class="fg"><label class="flb">Transmission</label>
+        <select class="fs" name="transmission">
           {% for t in ['Manuelle','Automatique'] %}
           <option value="{{ t }}" {% if vehicle and vehicle.transmission==t %}selected{% endif %}>{{ t }}</option>
           {% endfor %}
         </select></div>
     </div>
-    <div class="grid-2">
-      <div class="form-group"><label class="form-label">Prix / jour (FCFA)</label>
-        <input class="form-input" type="number" name="price_per_day" value="{{ vehicle.price_per_day if vehicle else '' }}" step="1" min="1" required placeholder="30000"></div>
-      <div class="form-group"><label class="form-label">Statut</label>
-        <select class="form-select" name="status">
-          {% for s, l in [('disponible','Disponible'),('louee','En location'),('hors_service','Hors service')] %}
+    <div class="g2f" style="margin-bottom:0">
+      <div class="fg"><label class="flb">Prix / jour (FCFA)</label>
+        <input class="fi" type="number" name="price_per_day" value="{{ vehicle.price_per_day if vehicle else '' }}" step="1" min="1" required placeholder="30000"></div>
+      <div class="fg"><label class="flb">Statut</label>
+        <select class="fs" name="status">
+          {% for s,l in [('disponible','Disponible'),('louee','En location'),('hors_service','Hors service')] %}
           <option value="{{ s }}" {% if vehicle and vehicle.status==s %}selected{% endif %}>{{ l }}</option>
           {% endfor %}
         </select></div>
     </div>
-    <div class="form-group"><label class="form-label">Description <span style="color:var(--txt-3)">(optionnel)</span></label>
-      <textarea class="form-textarea" name="description" placeholder="Décrivez le véhicule...">{{ vehicle.description if vehicle else '' }}</textarea></div>
-    <button type="submit" class="btn btn-primary" style="font-size:15px;padding:13px 32px;width:100%;justify-content:center">
+    <div class="fg"><label class="flb">Description <span style="font-weight:400;color:var(--txt-3)">(optionnel)</span></label>
+      <textarea class="fta" name="description" placeholder="Décrivez le véhicule...">{{ vehicle.description if vehicle else '' }}</textarea></div>
+    <button type="submit" class="btn btn-gold" style="font-size:15px;padding:13px 32px;width:100%;justify-content:center">
       {{ 'Enregistrer les modifications' if vehicle else '+ Ajouter le véhicule' }}
     </button>
   </form>

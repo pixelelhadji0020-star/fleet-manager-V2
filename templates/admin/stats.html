@@ -54,12 +54,12 @@
 .vpc-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-h))}
 
 /* PREDICT SECTION */
-.predict-card{background:linear-gradient(135deg,#12180a 0%,#0e1117 60%,#0a1018 100%);border:1px solid var(--gold-bord);border-radius:var(--r-lg);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+.predict-card{background:linear-gradient(135deg,#0a1810 0%,#111827 60%,#091c14 100%);border:1px solid var(--gold-bord);border-radius:var(--r-lg);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
 .predict-card::before{content:'🤖 IA';position:absolute;top:16px;right:16px;font-size:11px;background:var(--gold-dim);color:var(--gold);padding:3px 10px;border-radius:20px;border:1px solid var(--gold-bord);font-weight:700;font-family:'DM Mono',monospace;letter-spacing:.06em}
 .predict-title{font-size:17px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;color:var(--txt)}
 .predict-sub{font-size:13px;color:var(--txt-2);line-height:1.6;margin-bottom:16px}
 .predict-metrics{display:flex;gap:20px;flex-wrap:wrap}
-.pm{background:rgba(212,160,23,.08);border:1px solid var(--gold-bord);border-radius:10px;padding:12px 16px;flex:1;min-width:100px}
+.pm{background:rgba(16,185,129,.08);border:1px solid var(--gold-bord);border-radius:10px;padding:12px 16px;flex:1;min-width:100px}
 .pm-v{font-size:22px;font-weight:800;color:var(--gold);letter-spacing:-.03em}
 .pm-l{font-size:11px;color:var(--txt-3);margin-top:2px;font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
 </style>
@@ -116,7 +116,7 @@
 
   {% set total_vehicles = top_vehicles|length %}
   {% if top_vehicles %}
-  {% set top_v = top_vehicles|sort(attribute='rentals',reverse=True)|first if top_vehicles else none %}
+  {% set top_v = top_vehicles[0] if top_vehicles else none %}
   {% if top_v %}
   <div class="insight insight-gold">
     <div class="ins-hd">
@@ -160,7 +160,7 @@
   {% endif %}
 
   {% if top_vehicles %}
-  {% set underused = top_vehicles|selectattr('rentals','equalto',0)|list %}
+  {% set underused = top_vehicles|selectattr('rentals','defined')|selectattr('rentals','equalto',0)|list %}
   {% if underused %}
   <div class="insight insight-blue" style="margin-bottom:24px">
     <div class="ins-hd">
@@ -214,14 +214,15 @@
     <div class="chart-title">Performance par véhicule</div>
     <div class="chart-sub">Classement par rentabilité et taux d'utilisation estimé</div>
     {% if top_vehicles %}
-    {% set max_loc = top_vehicles|map(attribute='rentals')|max if top_vehicles|map(attribute='rentals')|max else 1 %}
-    {% for v in top_vehicles|sort(attribute='rentals',reverse=True) %}
+    {% set ns_ml = namespace(max_loc=1) %}
+    {% for v in top_vehicles %}{% if (v.rentals or 0) > ns_ml.max_loc %}{% set ns_ml.max_loc = (v.rentals or 1) %}{% endif %}{% endfor %}
+    {% for v in top_vehicles %}
     <div class="vpc">
       <div class="vpc-rank">#{{loop.index}}</div>
       <div class="vpc-info">
         <div class="vpc-name">{{v.brand}} {{v.model}}</div>
         <div class="vpc-cat">{{v.category}} · {{v.fuel}}</div>
-        <div class="vpc-bar"><div class="vpc-bar-fill" style="width:{{((v.rentals or 0) / max_loc * 100)|round}}%"></div></div>
+        <div class="vpc-bar"><div class="vpc-bar-fill" style="width:{{((v.rentals or 0) / ns_ml.max_loc * 100)|round}}%"></div></div>
       </div>
       <div class="vpc-stats">
         <div class="vpc-stat">
