@@ -588,34 +588,56 @@ def admin_edit_vehicle(vid):
 @app.route('/admin/statistiques')
 @admin_required
 def admin_stats():
-    supa = sb()
-    res_done = supa.table('reservations').select('*').eq('status','terminee').execute().data or []
-    # Revenue par mois
-    from collections import defaultdict
-    monthly = defaultdict(lambda: {'revenue':0,'count':0})
-    for r in res_done:
-        m = (r.get('created_at') or '')[:7]
-        monthly[m]['revenue'] += r.get('total_price',0)
-        monthly[m]['count']   += 1
-    revenue_monthly = [{'month':k,'revenue':round(v['revenue'],2),'count':v['count']}
-                       for k,v in sorted(monthly.items(), reverse=True)[:6]]
+    try:
+        from collections import Counter, defaultdict
 
-    vehicles = supa.table('vehicles').select('*').execute().data or []
-    top_vehicles = sorted(vehicles, key=lambda v: v.get('id',0))[:8]
-    by_category_d = defaultdict(lambda: {'rentals':0,'revenue':0})
-    for r in res_done:
-        v = next((vv for vv in vehicles if vv['id']==r['vehicle_id']), {})
-        cat = v.get('category','?')
-        by_category_d[cat]['rentals'] += 1
-        by_category_d[cat]['revenue'] += r.get('total_price',0)
-    by_category = [{'category':k,'rentals':v['rentals'],'revenue':round(v['revenue'],2)}
-                   for k,v in by_category_d.items()]
+        # Revenue par mois — use date_start for correct month bucketing
+        reservations_r = sb().table('reservations').select('date_start, total_price').eq('status', 'terminee').execute()
+        res_data = reservations_r.data or []
 
-    notifs, unread = get_notifs()
-    return render_template('admin/stats.html',
-        revenue_monthly=revenue_monthly, top_vehicles=top_vehicles,
-        by_category=by_category, satisfaction=[], utilization=[],
-        notifs=notifs, unread=unread)
+        monthly = defaultdict(float)
+        for r in res_data:
+            if r.get('date_start') and r.get('total_price'):
+                month_key = str(r['date_start'])[:7]
+                monthly[month_key] += float(r['total_price'])
+
+        revenue_monthly = [{'month': k, 'revenue': round(v, 2)} for k, v in sorted(monthly.items(), reverse=True)][:6]
+
+        # Fetch all vehicles
+        vehicles_r = sb().table('vehicles').select('id, brand, model, category, fuel, price_per_day').execute()
+        vehicles_list = vehicles_r.data or []
+
+        # Fetch completed reservations grouped by vehicle_id
+        rentals_r = sb().table('reservations').select('vehicle_id').eq('status', 'terminee').execute()
+        rentals_data = rentals_r.data or []
+
+        rental_counts = Counter(r['vehicle_id'] for r in rentals_data)
+
+        for v in vehicles_list:
+            v['rentals'] = rental_counts.get(v['id'], 0)
+
+        top_vehicles = sorted(vehicles_list, key=lambda x: x['rentals'], reverse=True)
+
+        category_counts = {}
+        for v in vehicles_list:
+            cat = v.get('category', 'Autre')
+            cat_rentals = rental_counts.get(v['id'], 0)
+            category_counts[cat] = category_counts.get(cat, 0) + cat_rentals
+
+        by_category = [{'category': k, 'rentals': v} for k, v in category_counts.items()]
+
+        notifs, unread = get_notifs()
+        return render_template('admin/stats.html',
+            revenue_monthly=revenue_monthly, top_vehicles=top_vehicles,
+            by_category=by_category, satisfaction=[], utilization=[],
+            notifs=notifs, unread=unread)
+    except Exception as e:
+        app.logger.error(f"admin_stats error: {e}")
+        notifs, unread = get_notifs()
+        return render_template('admin/stats.html',
+            revenue_monthly=[], top_vehicles=[],
+            by_category=[], satisfaction=[], utilization=[],
+            notifs=notifs, unread=unread)
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
